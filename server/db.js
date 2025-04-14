@@ -1,6 +1,9 @@
 const sqlite3 = require("sqlite3").verbose();
+const path = require("path");
 
-const db = new sqlite3.Database('./database.db', (err) => {
+const dbPath = path.join(__dirname,'database.db');
+
+const db = new sqlite3.Database(dbPath, (err) => {
 	if (err) {
     		console.error('Erreur lors de la connexion a la base de données', err.message);
   	} else {
@@ -16,7 +19,7 @@ const db = new sqlite3.Database('./database.db', (err) => {
 				    idPers      INTEGER PRIMARY KEY AUTOINCREMENT,
 				    nomPers     TEXT    NOT NULL,
 				    prenomPers  TEXT    NOT NULL,
-				    dNaisPers   TEXT    CHECK(dNaisPers GLOB '[0-9]{4}-[0-9]{2}-[0-9]{2}'),
+				    dNaisPers   TEXT    CHECK(dNaisPers GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
 				    numTelPers  TEXT,
 				    adressePers TEXT
 				);`
@@ -39,7 +42,7 @@ const db = new sqlite3.Database('./database.db', (err) => {
 			db.run(
 				`CREATE TABLE IF NOT EXISTS Infirmier (
 				idPers          INTEGER PRIMARY KEY,
-				datePrisePoste  TEXT CHECK(datePrisePoste GLOB '[0-9]{4}-[0-9]{2}-[0-9]{2}'),
+				datePrisePoste  TEXT CHECK(datePrisePoste GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
 				idService       INTEGER NOT NULL,
 
 				FOREIGN KEY (idPers) REFERENCES Personne(idPers) ON DELETE CASCADE,
@@ -53,7 +56,7 @@ const db = new sqlite3.Database('./database.db', (err) => {
 				mdp     TEXT,
 				role    TEXT,
 				-- CHECK(role IN ('Responsable','Adjoint','ChefDeService','Autre'))--
-				datePrisePoste TEXT CHECK(datePrisePoste GLOB '[0-9]{4}-[0-9]{2}-[0-9]{2}'),
+				datePrisePoste TEXT CHECK(datePrisePoste GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
 
 				FOREIGN KEY (idPers) REFERENCES Personne(idPers) ON DELETE CASCADE
 				);`
@@ -64,7 +67,7 @@ const db = new sqlite3.Database('./database.db', (err) => {
 				idPers          INTEGER PRIMARY KEY,
 				role            TEXT,
 				--CHECK(role IN ('Technicien','AgentEntretien','Autre'))
-				datePrisePoste  TEXT CHECK(datePrisePoste GLOB '[0-9]{4}-[0-9]{2}-[0-9]{2}'),
+				datePrisePoste  TEXT CHECK(datePrisePoste GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
 
 				FOREIGN KEY (idPers) REFERENCES Personne(idPers) ON DELETE CASCADE
 				);`
@@ -119,9 +122,9 @@ const db = new sqlite3.Database('./database.db', (err) => {
 			db.run(
 				`CREATE TABLE IF NOT EXISTS Sejour (
 				idSejour            INTEGER PRIMARY KEY AUTOINCREMENT,
-				dateAdmission       TEXT CHECK(dateAdmission GLOB '[0-9]{4}-[0-9]{2}-[0-9]{2}'),
-				dateSortiePrevue    TEXT CHECK(dateSortiePrevue GLOB '[0-9]{4}-[0-9]{2}-[0-9]{2}'),
-				dateSortieReelle    TEXT CHECK(dateSortieReelle GLOB '[0-9]{4}-[0-9]{2}-[0-9]{2}'),
+				dateAdmission       TEXT CHECK(dateAdmission GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
+				dateSortiePrevue    TEXT CHECK(dateSortiePrevue GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
+				dateSortieReelle    TEXT CHECK(dateSortieReelle GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
 
 				idPatient           INTEGER NOT NULL,
 				idLit               INTEGER NOT NULL,
@@ -138,7 +141,7 @@ const db = new sqlite3.Database('./database.db', (err) => {
 			db.run(
 				`CREATE TABLE IF NOT EXISTS Visite (
 				idVisite    INTEGER PRIMARY KEY AUTOINCREMENT,
-				dateVisite  TEXT CHECK(dateVisite GLOB '[0-9]{4}-[0-9]{2}-[0-9]{2}'),
+				dateVisite  TEXT CHECK(dateVisite GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
 				compteRendu TEXT,
 
 				idMedecin   INTEGER NOT NULL,
@@ -165,7 +168,7 @@ const db = new sqlite3.Database('./database.db', (err) => {
 			db.run(
 				`CREATE TABLE IF NOT EXISTS Reunion (
 				idReunion       INTEGER PRIMARY KEY AUTOINCREMENT,
-				dateReunion     TEXT CHECK(dateReunion GLOB '[0-9]{4}-[0-9]{2}-[0-9]{2}'),
+				dateReunion     TEXT CHECK(dateReunion GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
 				objetReunion    TEXT
 				);`
 			);
@@ -186,7 +189,7 @@ const db = new sqlite3.Database('./database.db', (err) => {
 			db.run(
 				`CREATE TABLE IF NOT EXISTS Soin (
 				idSoin          INTEGER PRIMARY KEY AUTOINCREMENT,
-				dateHeureSoin   TEXT CHECK(dateHeureSoin GLOB '[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}'), -- Stocké sous format "YYYY-MM-DD HH:MM:SS"
+				dateHeureSoin   TEXT CHECK(dateHeureSoin  GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]'), -- Stocké sous format "YYYY-MM-DD HH:MM:SS"
 				descriptionSoin TEXT NOT NULL,
 
 				idInfirmier     INTEGER NOT NULL,
@@ -222,7 +225,7 @@ const db = new sqlite3.Database('./database.db', (err) => {
 			db.run(
 				`CREATE TABLE IF NOT EXISTS Nettoyage (
 				idNettoyage     INTEGER PRIMARY KEY AUTOINCREMENT,
-				dateNettoyage   TEXT CHECK(dateNettoyage GLOB '[0-9]{4}-[0-9]{2}-[0-9]{2}'),
+				dateNettoyage   TEXT CHECK(dateNettoyage ),
 				idChambre       INTEGER NOT NULL,
 
 				FOREIGN KEY (idChambre) REFERENCES Chambre(idChambre) ON DELETE CASCADE ON UPDATE CASCADE
@@ -245,7 +248,7 @@ const db = new sqlite3.Database('./database.db', (err) => {
 				idAntecedent    INTEGER PRIMARY KEY AUTOINCREMENT,
 				typeAntecedent  TEXT,
 				description     TEXT,
-				dateDeclaration TEXT CHECK(dateDeclaration GLOB '[0-9]{4}-[0-9]{2}-[0-9]{2}'),
+				dateDeclaration TEXT CHECK(dateDeclaration GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
 
 				idPatient INTEGER NOT NULL,
 

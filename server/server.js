@@ -23,11 +23,11 @@ app.get('/', (req, res) => {
 	res.sendFile(path.join(__dirname, '../client/index.html'));
 });
 
-app.get('/connection', (req, res) => {
+app.get('/login', (req, res) => {
 	res.sendFile(path.join(__dirname, '../client/connection.html'));
 });
 
-app.post('/login',(req,res) =>{
+app.post('/login', (req,res) =>{
 	const {login, password} = req.body;
 	console.log("Login :" + login);
 	console.log("Password :" + password);
@@ -39,7 +39,7 @@ app.post('/login',(req,res) =>{
 			console.error(err);
 		}else if(!row){
 			console.log("Mauvais login ou mdp");
-			res.redirect('/connection');
+			res.redirect('/login');
 		}else{
 			//Creation d'objet
 			const medecin = new Medecin(
@@ -54,13 +54,27 @@ app.post('/login',(req,res) =>{
 			    row.idService
 			);
 
-			session.medecin = medecin;
-			console.log("Medecin mis en session");
+			req.session.medecin = medecin;
+			console.log("Medecin mis en session: " + req.session.medecin);
+			res.redirect('/dashboard');
 		}
 
 	});
 });
 
+app.get('/dashboard',isMedecin,(req,res)=> {
+	res.sendFile(path.join(__dirname, '../client/dashboard.html'));
+});
+
 app.listen(PORT, () => {
 	console.log(`Serveur Express en ligne sur http://localhost:${PORT}`);
 });
+
+function isMedecin(req,res,next){
+	if(req.session && req.session.medecin){
+		return next();
+	}else{
+		console.log("Connection requise");
+		return res.redirect('/login');
+	}
+};

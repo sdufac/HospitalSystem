@@ -36,11 +36,6 @@ class Medecin extends Personne {
 		this.specialite = specialite;
 		this.mdp = mdp;
 		this.idService = idService;
-		this.patients = []; // Tableau d'objets Patient
-	}
-
-	ajouterPatient(patient) {
-		this.patients.push(patient);
 	}
 }
 
