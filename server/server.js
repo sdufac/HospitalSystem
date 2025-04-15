@@ -3,6 +3,8 @@ const db = require('./db.js');
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
+const {isMedecin} = require('./tool.js');
+const apiRoutes = require('./api.js');
 
 const app = express();
 const PORT = 3000;
@@ -18,6 +20,7 @@ app.use(session({
 		maxAge: 1000 * 60 * 60	//1000ms * 60sec * 60min
 	}
 }));
+app.use('/api',apiRoutes);
 
 app.get('/', (req, res) => {
 	res.sendFile(path.join(__dirname, '../client/index.html'));
@@ -32,7 +35,7 @@ app.post('/login', (req,res) =>{
 	console.log("Login :" + login);
 	console.log("Password :" + password);
 
-	const sql = "SELECT * FROM Medecin m JOIN Personne p WHERE p.nomPers = ? AND m.mdp = ?";
+	const sql = "SELECT * FROM Medecin m JOIN Personne p ON p.idPers = m.idPers JOIN Service s ON m.idService = s.idService WHERE m.mdp = ? AND p.nomPers = ?";
 
 	db.get(sql,[login,password], (err,row) => {
 		if(err){
@@ -51,30 +54,21 @@ app.post('/login', (req,res) =>{
 			    row.adressePers,
 			    row.specialite,
 			    row.mdp,
-			    row.idService
+			    row.nomService
 			);
 
 			req.session.medecin = medecin;
 			console.log("Medecin mis en session: " + req.session.medecin);
-			res.redirect('/dashboard');
+			res.redirect('/medecin');
 		}
 
 	});
 });
 
-app.get('/dashboard',isMedecin,(req,res)=> {
-	res.sendFile(path.join(__dirname, '../client/dashboard.html'));
+app.get('/medecin',isMedecin,(req,res)=> {
+	res.sendFile(path.join(__dirname, '../client/medecin.html'));
 });
 
 app.listen(PORT, () => {
 	console.log(`Serveur Express en ligne sur http://localhost:${PORT}`);
 });
-
-function isMedecin(req,res,next){
-	if(req.session && req.session.medecin){
-		return next();
-	}else{
-		console.log("Connection requise");
-		return res.redirect('/login');
-	}
-};

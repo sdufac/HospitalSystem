@@ -31,11 +31,11 @@ class Patient extends Personne {
 }
 
 class Medecin extends Personne {
-	constructor(idPers, nomPers, prenomPers, dNaisPers, numTelPers, adressePers, specialite, mdp, idService) {
+	constructor(idPers, nomPers, prenomPers, dNaisPers, numTelPers, adressePers, specialite, mdp, service) {
 		super(idPers, nomPers, prenomPers, dNaisPers, numTelPers, adressePers);
 		this.specialite = specialite;
 		this.mdp = mdp;
-		this.idService = idService;
+		this.service = service;
 	}
 }
 
