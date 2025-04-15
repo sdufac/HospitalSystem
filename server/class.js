@@ -22,11 +22,6 @@ class Patient extends Personne {
 		super(idPers, nomPers, prenomPers, dNaisPers, numTelPers, adressePers);
 		this.numDossierMed = numDossierMed;
 		this.motifHospitalisation = motifHospitalisation;
-		this.visites = [];
-	}
-
-	ajouterVisite(visite) {
-		this.visites.push(visite);
 	}
 }
 
