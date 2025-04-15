@@ -32,8 +32,6 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req,res) =>{
 	const {login, password} = req.body;
-	console.log("Login :" + login);
-	console.log("Password :" + password);
 
 	const sql = "SELECT * FROM Medecin m JOIN Personne p ON p.idPers = m.idPers JOIN Service s ON m.idService = s.idService WHERE m.mdp = ? AND p.nomPers = ?";
 
@@ -58,6 +56,7 @@ app.post('/login', (req,res) =>{
 			);
 
 			req.session.medecin = medecin;
+			console.log("Service du medecin: " + req.session.medecin.service);
 			console.log("Medecin mis en session: " + req.session.medecin);
 			res.redirect('/medecin');
 		}

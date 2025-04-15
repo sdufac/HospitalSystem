@@ -9,17 +9,20 @@ router.get('/getmedecin',isMedecin, (req,res) => {
 });
 
 router.get('/getpatients', isMedecin, (req,res) =>{
-	const sql = `SELECT p.nomPers, p.nomPers, p.prenomPers, p.dNaisPers, p.numTelPers, p.adressePers, pa.numDossierMed, pa.motifHospitalisation
+	const sql = `SELECT p.idPers, p.nomPers, p.prenomPers, p.dNaisPers, p.numTelPers, p.adressePers, pa.numDossierMed, pa.motifHospitalisation
 		    FROM Patient pa 
-		    JOIN Personne p ON pa.idPers = p.isPers 
+		    JOIN Personne p ON pa.idPers = p.idPers 
                     JOIN Visite v ON v.idPatient = pa.idPers
-		    JOIN Medecin m ON v.idMedecin = m.idMedecin
-		    JOIN Service s ON m.idService = s.isService
+		    JOIN Medecin m ON v.idMedecin = m.idPers
+		    JOIN Service s ON m.idService = s.idService
 		    WHERE s.nomService = ?`
-	db.all(sql,req.medecin.service, (err,rows) =>{
+	console.log("API// Service du medecin: " + req.session.medecin.service);
+
+	db.all(sql,req.session.medecin.service, (err,rows) =>{
 		if(err){
 			console.error(err.message);
 		}else{
+			console.log("Patients recup:", rows);
 			let patients = [];
 			rows.forEach(row =>{
 				let patient = new Patient(

@@ -1,15 +1,31 @@
 const title = document.getElementById("title");
-const medecin = fetchMedecin();
-title.innerHTML = "Bonjour " + medecin.prenomPers + " " + medecin.nomPers;
-
 const patient = document.getElementById("patient");
-patient.innerHTML = "Patient du service " + medecin.service;
-
-const patients = fetchPatients();
 const patientDiv = document.getElementById("patients");
-patients.forEach(p =>{
-	patientDiv += "aa " + p.nomPers + " " + p.prenomPers + "<br>";
-});
+display();
+
+
+async function display(){
+	try{
+		const medecin = await fetchMedecin();
+		if(medecin){
+			title.innerHTML = "Bonjour " + medecin.prenomPers + " " + medecin.nomPers;
+			patient.innerHTML = "Patient du service " + medecin.service;
+		}
+	}catch(error){
+		console.error("Erreur client medecin", error);
+	}
+
+	try{
+		const patients = await fetchPatients();
+		if(patients){
+			patients.forEach(p =>{
+				patientDiv.innerHTML += p.nomPers + " " + p.prenomPers + "<br>";
+			});
+		}
+	}catch(error){
+		console.error("Erreur client patients", error);
+	}
+}
 
 async function fetchMedecin(){
 	try{
