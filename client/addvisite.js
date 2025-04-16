@@ -7,10 +7,11 @@ const id = params.get('id');
 
 //Date du jour en on format pour la bdd
 const ajd = new Date();
-const yyyy = ajd.getFullYear;
+const yyyy = ajd.getFullYear();
 const mm = String(ajd.getMonth() + 1).padStart(2, '0');
 const dd = String(ajd.getDate()).padStart(2, '0');
 const date = `${yyyy}-${mm}-${dd}`;
+console.log("DATE =" + date);
 
 form();
 

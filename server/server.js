@@ -76,6 +76,15 @@ app.get('/addvisite',isMedecin,(req,res) => {
 
 app.post('/addvisite',isMedecin,(req,res) => {
 //TODO requete d'insertion de visite
+	const sql = `INSERT INTO Visite (dateVisite,compteRendu,idMedecin,idPatient) 
+		     VALUES (?,?,?,?)`
+	db.run(sql,[req.body.formdate,req.body.compterendu,req.body.idmedecin,req.body.idpatient],
+	err =>{
+		if(err){
+			return console.error(err.message);
+		}
+		console.log("visite inséré");
+	});
 	res.redirect(`/patient?id=${req.body.idpatient}`);
 });
 
