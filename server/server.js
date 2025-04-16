@@ -66,8 +66,17 @@ app.get('/medecin',isMedecin,(req,res)=> {
 	res.sendFile(path.join(__dirname, '../client/medecin.html'));
 });
 
-app.get('/patient/:id',isMedecin,(req,res) => {
+app.get('/patient',isMedecin,(req,res) => {
 	res.sendFile(path.join(__dirname,'../client/patient.html'));
+});
+
+app.get('/addvisite',isMedecin,(req,res) => {
+	res.sendFile(path.join(__dirname,'../client/addvisite.html'));
+});
+
+app.post('/addvisite',isMedecin,(req,res) => {
+//TODO requete d'insertion de visite
+	res.redirect(`/patient?id=${req.body.idpatient}`);
 });
 
 app.listen(PORT, () => {

@@ -16,7 +16,6 @@ router.get('/getpatients', isMedecin, (req,res) =>{
 		    JOIN Medecin m ON v.idMedecin = m.idPers
 		    JOIN Service s ON m.idService = s.idService
 		    WHERE s.nomService = ?`
-	console.log("API// Service du medecin: " + req.session.medecin.service);
 
 	db.all(sql,req.session.medecin.service, (err,rows) =>{
 		if(err){
@@ -42,8 +41,8 @@ router.get('/getpatients', isMedecin, (req,res) =>{
 	});
 });
 
-router.get('/patient/:id',isMedecin ,(req,res)=>{
-	const id = req.params.id;
+router.get('/patient',isMedecin ,(req,res)=>{
+	const id = req.query.id;
 	let html;
 
 	const sqlPatient = `SELECT p.nomPers, p.prenomPers, p.dNaisPers, p.numTelPers, p.adressePers
@@ -117,7 +116,8 @@ router.get('/patient/:id',isMedecin ,(req,res)=>{
 							<td>${row.quantite}</td>
 						 </tr>`
 				});
-				html += `</table>`
+				html += `</table><hr>
+					 <button onclick='window.location.href="/addvisite?id=${id}"'>Visite</button>`;
 				res.send(html);
 			});
 

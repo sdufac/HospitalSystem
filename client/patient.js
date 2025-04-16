@@ -13,16 +13,17 @@ async function display(){
 }
 
 async function fetchInfo(){
-	const pathParts = window.location.pathname.split('/');
-	const patientId = pathParts[pathParts.length - 1];
+	const params = new URLSearchParams(window.location.search);
+	const patientId = params.get('id');
+	console.log("ID = " + patientId);
 
 	try{
-		const response = await fetch('/api/patient/' + patientId);
+		const response = await fetch('/api/patient?id=' + patientId);
 		if(!response.ok) throw new Erreur("Erreur lors de la recuperation des info patient coté client");
 
 		const html = await response.text();
 		return html
-	}catch(err){
-		console.error("Erreuuuur",err);
+	}catch(error){
+		console.error("Erreuuuur",error);
 	}
 }

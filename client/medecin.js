@@ -20,8 +20,8 @@ async function display(){
 		if(patients){
 			patients.forEach(p =>{
 				patientDiv.innerHTML += p.nomPers + ` ` + p.prenomPers
-							+ `<button onclick="window.location.href='/patient/`+
-							p.idPers +`'">+ d'info</button>`;
+							+ `<button onclick="window.location.href='/patient?id=`+
+							p.idPers +`'">+ d'info</button><br>`;
 			});
 		}
 	}catch(error){

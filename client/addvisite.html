@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Ajout Visite</title>
+</head>
+<body>
+	<h1 id="title">Nouvelle visite</h1><hr>
+	<h2 id="date"></h2>
+	<div id="formulaire">
+		<form action="/addvisite" method="POST" id="visiteform">
+			<input type="hidden" id="idmedecin" name="idmedecin">
+			<input type="hidden" id="idpatient" name="idpatient">
+			<input type="hidden" id="formdate" name="formdate">
+			<label for="compterendu">Compte rendu</label><br>
+			<input type="text" id="compterendu" name="compterendu"><br><br>
+			<input type="submit" value="Confirmer">
+		</form>
+	</div>
+	<script src="addvisite.js"> </script>
+</body>
+</html>
