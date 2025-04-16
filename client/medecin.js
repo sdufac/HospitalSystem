@@ -19,7 +19,9 @@ async function display(){
 		const patients = await fetchPatients();
 		if(patients){
 			patients.forEach(p =>{
-				patientDiv.innerHTML += p.nomPers + " " + p.prenomPers + "<br>";
+				patientDiv.innerHTML += p.nomPers + ` ` + p.prenomPers
+							+ `<button onclick="window.location.href='/patient/`+
+							p.idPers +`'">+ d'info</button>`;
 			});
 		}
 	}catch(error){

@@ -56,8 +56,6 @@ app.post('/login', (req,res) =>{
 			);
 
 			req.session.medecin = medecin;
-			console.log("Service du medecin: " + req.session.medecin.service);
-			console.log("Medecin mis en session: " + req.session.medecin);
 			res.redirect('/medecin');
 		}
 
@@ -66,6 +64,10 @@ app.post('/login', (req,res) =>{
 
 app.get('/medecin',isMedecin,(req,res)=> {
 	res.sendFile(path.join(__dirname, '../client/medecin.html'));
+});
+
+app.get('/patient/:id',isMedecin,(req,res) => {
+	res.sendFile(path.join(__dirname,'../client/patient.html'));
 });
 
 app.listen(PORT, () => {
