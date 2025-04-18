@@ -9,4 +9,13 @@ function isMedecin(req,res,next){
 	}
 }
 
-module.exports = {isMedecin};
+function isAdmin(req,res,next){
+	if(req.session && req.session.admin){
+		return next();
+	}else{
+		console.log("Connection requise");
+		return res.redirect('/login');
+	}
+}
+
+module.exports = {isMedecin, isAdmin};

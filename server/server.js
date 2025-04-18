@@ -3,7 +3,7 @@ const db = require('./db.js');
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
-const {isMedecin} = require('./tool.js');
+const {isMedecin,isAdmin} = require('./tool.js');
 const apiRoutes = require('./api.js');
 
 const app = express();
@@ -33,15 +33,28 @@ app.get('/login', (req, res) => {
 app.post('/login', (req,res) =>{
 	const {login, password} = req.body;
 
-	const sql = "SELECT * FROM Medecin m JOIN Personne p ON p.idPers = m.idPers JOIN Service s ON m.idService = s.idService WHERE m.mdp = ? AND p.nomPers = ?";
+	const sql = `SELECT * FROM Medecin m 
+		     JOIN Personne p ON p.idPers = m.idPers 
+                     JOIN Service s ON m.idService = s.idService 
+		     WHERE m.mdp = ? AND p.nomPers = ?`;
 
-	db.get(sql,[login,password], (err,row) => {
+	const sqlConnection = `SELECT p.idPers,p.nomPers,p.prenomPers,p.dNaisPers,p.numTelPers,p.adressePers,
+			       m.idPers AS idMedecin, m.specialite,
+			       pa.idPers AS idAdmin, pa.role, pa.datePrisePoste,
+			       s.nomService 
+			       FROM Personne p
+			       LEFT JOIN Medecin m ON p.idPers = m.idPers AND m.mdp = ?
+			       LEFT JOIN PersonnelAdmin pa ON p.idPers = pa.idPers AND pa.mdp = ?
+			       LEFT JOIN Service s ON m.idService = s.idService
+			       WHERE p.nomPers = ?;`
+
+	db.get(sqlConnection,[password,password,login], (err,row) => {
 		if(err){
 			console.error(err);
 		}else if(!row){
 			console.log("Mauvais login ou mdp");
 			res.redirect('/login');
-		}else{
+		}else if(row.idMedecin){
 			//Creation d'objet
 			const medecin = new Medecin(
 			    row.idPers,
@@ -57,6 +70,21 @@ app.post('/login', (req,res) =>{
 
 			req.session.medecin = medecin;
 			res.redirect('/medecin');
+		}else if(row.idAdmin){
+			console.log("ADMIN");
+			const admin = {
+				idPers: row.idPers,
+				nomPers: row.nomPers,
+				prenomPers: row.prenomPers,
+				dNaisPers: row.dNaisPers,
+				numTelPers: row.numTelPers,
+				adressePers: row.adressePers,
+				role: row.role,
+				datePrisePoste: row.datePrisePoste
+			}
+
+			req.session.admin = admin;
+			res.redirect('/admin');
 		}
 
 	});
@@ -136,6 +164,10 @@ app.post('/addreunion',isMedecin, (req,res) => {
 	});
 
 	res.redirect(`/patient?id=${req.body.idpatient}`);
+});
+
+app.get('/admin',isAdmin,(req,res) => {
+	res.sendFile(path.join(__dirname, '../client/admin.html'));
 });
 
 app.listen(PORT, () => {
