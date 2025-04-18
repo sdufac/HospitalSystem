@@ -88,6 +88,56 @@ app.post('/addvisite',isMedecin,(req,res) => {
 	res.redirect(`/patient?id=${req.body.idpatient}`);
 });
 
+app.get('/addreunion', isMedecin, (req,res) => {
+	res.sendFile(path.join(__dirname,'../client/addreunion.html'));
+});
+
+app.post('/addreunion',isMedecin, (req,res) => {
+	const sqlReunion = `INSERT INTO Reunion (dateReunion, objetReunion)
+			    VALUES (?,?)`;
+
+	const sqlParticipant = `INSERT INTO ParticipationReunion 
+				VALUES (?,?,?)`;
+
+	const sqlSoin = `INSERT INTO Soin (dateHeureSoin,descriptionSoin,idInfirmier,idPatient,idReunion)
+			 VALUES (?,?,?,?,?)`
+
+	const sqlNec = `INSERT INTO Necessiter VALUES (?,?,?)`;
+
+	const dateHeure = req.body.datesoin + " " + req.body.heuresoin;
+	console.log("DATEHEURE: " + dateHeure);
+	console.log("IDINFPRESENT= " + req.body.idinfpresent);
+	console.log("IDINFRES= " + req.body.idinfres);
+
+	db.run(sqlReunion,[req.body.formdate,req.body.objet], function(err) {
+		if(err){
+			console.error(err);
+		}
+		const idReunion = this.lastID;
+		db.run(sqlParticipant,[idReunion,req.session.medecin.idPers,req.body.idinfpresent], function(err) {
+			if(err){
+				console.error(err);
+			}
+
+			db.run(sqlSoin,[dateHeure,req.body.description,req.body.idinfres,req.body.idpatient,idReunion],function (err) {
+				if(err){
+					console.error(err);
+				}
+
+				const idSoin = this.lastID;
+				
+				db.run(sqlNec,[idSoin,req.body.idmedicament,req.body.quantite], function (err){
+					if(err){
+						console.error(err);
+					}
+				});
+			});
+		});
+	});
+
+	res.redirect(`/patient?id=${req.body.idpatient}`);
+});
+
 app.listen(PORT, () => {
 	console.log(`Serveur Express en ligne sur http://localhost:${PORT}`);
 });

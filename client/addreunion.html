@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Ajout Reunion</title>
+	<link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<h1 id="title">Nouvelle réunion</h1><hr>
+	<h2 id="date"></h2>
+	<div id="formulaire">
+		<form action="/addreunion" method="POST" id="form">
+			<input type="hidden" id="idpatient" name="idpatient">
+			<input type="hidden" id="formdate" name="formdate">
+				
+			<input type="hidden" id="idinfpresent" name="idinfpresent">
+			<input type="hidden" id="idinfres" name="idinfres">
+
+			<input type="hidden" id="idmedicament" name="idmedicament">
+
+			<label for="objet">Objet de la réunion</label><br>
+			<input type="text" id="objet" name="objet"><br><br>
+			
+			<label for="infpresent">Infirmier présent</label><br>
+			<input list="infpresent" name="infpresent" id="infpresentinput" placeholder="...">
+			<datalist id="infpresent">
+			</datalist><br><br>
+			
+			<label for="datesoin">Date du soin</label><br>
+			<input type="date" id="datesoin" name="datesoin"><br><br>
+
+			<label for="heuresoin">Heure du soin</label><br>
+			<input type="time" id="heuresoin" name="heuresoin"><br><br>
+
+			<label for="description">Description du soin</label><br>
+			<input type="text" id="description" name="description"><br><br>
+
+			<label for="infres">Infirmier responsable du soin</label><br>
+			<input list="infres" id="infresinput" name="infres" placeholder="...">
+			<datalist id="infres">
+			</datalist><br><br>
+
+			<label for="medicament">Medicament</label><br>
+			<input list="medicament" id="medicamentinput" name="medicament" placeholder="...">
+			<datalist id="medicament">
+			</datalist><br><br>
+
+			<label for="quantite">Quantité</label><br>
+			<input type="text" id="quantite" name="quantite"><br><br>
+
+			<input type="submit" value="Confirmer">
+		</form>
+	</div>
+	<script src="addreunion.js"> </script>
+</body>
+</html>

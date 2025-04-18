@@ -62,6 +62,10 @@ router.get('/patient',isMedecin ,(req,res)=>{
 			  WHERE s.idPatient = ?;
 			  `;
 
+	const sqlAntecedent = `SELECT a.typeAntecedent, a.description, a.dateDeclaration
+			       FROM Antecedent a
+			       WHERE a.idPatient = ?`;
+
 	db.get(sqlPatient,id, (err,row) => {
 		if(err){
 			console.error(err);
@@ -114,14 +118,71 @@ router.get('/patient',isMedecin ,(req,res)=>{
 							<td>${row.descriptionSoin}</td>
 							<td>${row.nomMedicament}</td>
 							<td>${row.quantite}</td>
-						 </tr>`
+						 </tr>`;
 				});
-				html += `</table><hr>
-					 <button onclick='window.location.href="/addvisite?id=${id}"'>Visite</button>`;
-				res.send(html);
+				html+= `</table>`;
+
+				db.all(sqlAntecedent,id, (err,rows) => {
+					if(err){
+						console.error(err);
+					}
+
+					html+=`<h2>Antecedents</h2><br>
+						<table>
+						<tr>
+							<th>Type</th>
+							<th>Description</th>
+							<th>Date<th>
+						</tr>`;
+
+					rows.forEach(row => {
+						html += `<tr>
+								<td>${row.typeAntecedent}</td>
+								<td>${row.description}</td>
+								<td>${row.dateDeclaration}</td>
+							 </tr>`;
+					});
+
+					html += `</table><hr>
+						 <button onclick='window.location.href="/addvisite?id=${id}"'>Visite</button>
+						 <button onclick='window.location.href="/addreunion?id=${id}"'>Reunion</button>`;
+					res.send(html);
+				});
 			});
 
 		});
+	});
+});
+
+router.get('/getinfirmier',isMedecin,(req,res) =>{
+	const sql = `SELECT p.idPers, p.nomPers, p.prenomPers
+		     FROM Personne p
+		     JOIN Infirmier i ON p.idPers = i.idPers`
+	
+	db.all(sql,(err,rows) => {
+		const infirmiers = [];
+
+		rows.forEach(row => {
+			infirmiers.push({ idPers: row.idPers, nomPers: row.nomPers, prenomPers:row.prenomPers});
+		});
+		res.json(infirmiers);
+	});
+});
+
+router.get('/getmedicaments',isMedecin,(req,res) => {
+	const sql = `SELECT * FROM Medicament`;
+
+	db.all(sql, (err,rows) => {
+		if(err){
+			console.error(err);
+		}
+
+		const medicaments = [];
+
+		rows.forEach(row => {
+			medicaments.push({idMedicament: row.idMedicament, nomMedicament: row.nomMedicament});
+		});
+		return res.json(medicaments);
 	});
 });
 
