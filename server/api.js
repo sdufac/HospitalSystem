@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {isMedecin} = require('./tool');
+const {isMedecin, isAdmin} = require('./tool');
 const db = require('./db');
 const {Medecin,Visite,Patient,Personne} = require('./class.js');
 
@@ -184,6 +184,50 @@ router.get('/getmedicaments',isMedecin,(req,res) => {
 		});
 		return res.json(medicaments);
 	});
+});
+
+router.get('/getrooms',isAdmin,(req,res) => {
+	const sql = `SELECT c.idChambre, c.numChambre, c.capacite,
+		     COUNT(DISTINCT s.idSejour) AS nbLitsOccupes,
+		     MAX(n.dateNettoyage) AS derniereDateNettoyage
+		     FROM Chambre c
+
+		     LEFT JOIN Lit l ON l.idChambre = c.idChambre
+
+		     LEFT JOIN Sejour s ON s.idLit = l.idLit
+    		     AND DATE('now') >= s.dateAdmission
+		     AND DATE('now') <= COALESCE(s.dateSortieReelle, s.dateSortiePrevue)
+
+		     LEFT JOIN Nettoyage n ON n.idChambre = c.idChambre
+
+		     GROUP BY c.idChambre, c.numChambre, c.capacite
+		     ORDER BY c.numChambre;`
+
+	db.all(sql,(err,rows) =>{
+		if(err){
+			console.error(err);
+		}
+
+		let rooms = []
+
+		rows.forEach(row => {
+			const room = {
+				idChambre: row.idChambre,
+				numChambre: row.numChambre,
+				capacite: row.capacite,
+				nbLitsOccupes: row.nbLitsOccupes,
+				dateNettoyage: row.derniereDateNettoyage
+			}
+
+			rooms.push(room);
+		})
+
+		return res.json(rooms);
+	});
+});
+
+router.get('/getadmin',isAdmin, (req,res) => {
+	res.json(req.session.admin);
 });
 
 module.exports = router;
