@@ -174,6 +174,31 @@ app.get('/chambre',isAdmin,(req,res) => {
 	res.sendFile(path.join(__dirname,'../client/chambre.html'));
 });
 
+app.post('/addmenage',isAdmin,(req,res) => {
+	console.log("formulaire soumis:",req.body);
+
+	const sql=`INSERT INTO Nettoyage (dateNettoyage,idChambre)
+		   VALUES (?,?);`
+
+	const sql2=`INSERT INTO EffectuerNettoyage VALUES (?,?);`
+
+	db.run(sql,[req.body.datem,req.body.idchambre],function(err) {
+		if (err) {
+			console.error(err.message);
+			return;
+		} else {
+			db.run(sql2,[this.lastID,req.body.idpmenage],function(err) {
+				if(err){
+					console.error(err.message);
+					return;
+				}
+			});
+		}
+	});
+
+	res.redirect('/admin');
+});
+
 app.listen(PORT, () => {
 	console.log(`Serveur Express en ligne sur http://localhost:${PORT}`);
 });

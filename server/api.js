@@ -254,7 +254,7 @@ router.get('/chambre',isAdmin, (req,res) => {
 		rows.forEach(row => {
 			html += `<h2> Lit ${nb}</h2>`;
 			if(row.nomPers){
-				html+= `${row.nomPers} ${row.prenomPers}<br><br>`;
+				html+= `${row.nomPers} ${row.prenomPers}<br>`;
 			}else{
 				html+= `Aucun patient n'occupe actuellement le lit`;
 			}
@@ -263,6 +263,29 @@ router.get('/chambre',isAdmin, (req,res) => {
 		});
 		return res.send(html);
 	});
+});
+
+router.get('/getpersnet',isAdmin,(req,res) => {
+	const sql = `SELECT p.idPers, p.nomPers, p.prenomPers
+		     FROM Personne p
+		     JOIN PersonnelNettoyage pn ON pn.idPers = p.idPers;`
+
+	db.all(sql,(err, rows) => {
+		const pers = [];
+
+		rows.forEach(row => {
+			const pernet ={
+				idPers: row.idPers,
+				nomPers: row.nomPers,
+				prenomPers: row.prenomPers
+			}
+
+			pers.push(pernet);
+		});
+
+		return res.json(pers);
+	});
+
 });
 
 module.exports = router;
