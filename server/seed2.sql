@@ -66,10 +66,14 @@ INSERT INTO Lit (idLit, numLit, idChambre) VALUES
 (2, 'L2', 1),
 (3, 'L3', 2),
 (4, 'L4', 2),
-(5, 'L5', 3),
-(6, 'L6', 3),
+(5, 'L5', 2),
+(6, 'L6', 2),
 (7, 'L7', 3),
-(8, 'L8', 2);
+(8, 'L8', 3),
+(9, 'L9', 3),
+(10, 'L10', 3),
+(11, 'L11', 3),
+(12, 'L12', 3);
 
 -- SEJOURS
 INSERT INTO Sejour (idSejour, dateAdmission, dateSortiePrevue, dateSortieReelle, idPatient, idLit, idAdminAffectation) VALUES

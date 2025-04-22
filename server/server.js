@@ -170,6 +170,10 @@ app.get('/admin',isAdmin,(req,res) => {
 	res.sendFile(path.join(__dirname, '../client/admin.html'));
 });
 
+app.get('/chambre',isAdmin,(req,res) => {
+	res.sendFile(path.join(__dirname,'../client/chambre.html'));
+});
+
 app.listen(PORT, () => {
 	console.log(`Serveur Express en ligne sur http://localhost:${PORT}`);
 });

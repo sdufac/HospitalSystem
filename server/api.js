@@ -230,4 +230,39 @@ router.get('/getadmin',isAdmin, (req,res) => {
 	res.json(req.session.admin);
 });
 
+router.get('/chambre',isAdmin, (req,res) => {
+	const id = req.query.id;
+	const date = req.query.date;
+	let html = "";
+
+	const sql = `SELECT l.numLit, s.dateAdmission, s.dateSortiePrevue, p.nomPers, p.prenomPers
+		     FROM Chambre c
+		     JOIN Lit l ON c.idChambre = l.idChambre
+		     LEFT JOIN Sejour s ON l.idLit = s.idLit 
+			AND s.dateAdmission <= ?
+			AND (s.dateSortieReelle IS NULL AND s.dateSortiePrevue >= ?
+			OR s.dateSortieReelle IS NOT NULL AND s.dateSortieReelle >= ?)
+		     LEFT JOIN Personne p ON s.idPatient= p.idPers
+		     WHERE c.idChambre = ?;`;
+
+	db.all(sql,[date,date,date,id],(err,rows) => {
+		if(err){
+			console.error(err);
+		}
+
+		let nb = 1;
+		rows.forEach(row => {
+			html += `<h2> Lit ${nb}</h2>`;
+			if(row.nomPers){
+				html+= `${row.nomPers} ${row.prenomPers}<br><br>`;
+			}else{
+				html+= `Aucun patient n'occupe actuellement le lit`;
+			}
+
+			nb++;
+		});
+		return res.send(html);
+	});
+});
+
 module.exports = router;

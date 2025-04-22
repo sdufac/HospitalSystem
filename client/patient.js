@@ -15,7 +15,6 @@ async function display(){
 async function fetchInfo(){
 	const params = new URLSearchParams(window.location.search);
 	const patientId = params.get('id');
-	console.log("ID = " + patientId);
 
 	try{
 		const response = await fetch('/api/patient?id=' + patientId);
