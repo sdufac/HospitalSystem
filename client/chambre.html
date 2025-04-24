@@ -23,6 +23,27 @@
 		</datalist>
 
 		<input type="submit" value="Confirmer">
+	</form><hr>
+	<h2> Ajouter un séjour </h2>
+	<form action="/addsejour" method="POST">
+		<input type="hidden" id="sidpatient" name="sidpatient">
+
+		<label for="dateadmi"> Date d'admission </label><br>
+		<input type="date" name="dateadmi" id="dateadmi"><br><br>
+
+		<label for="datesortie"> Date de sortie prévue </label><br>
+		<input type="date" name="datesortie" id="datesortie"><br><br>
+
+		<label for="spatientinput">Patient</label><br>
+		<input list="spatient" id="spatientinput" name="spatientinput">
+		<datalist id="spatient">
+		</datalist><br><br>
+
+		<label for="lit"> Lit </label><br>
+		<select id="lit" name="lit">
+		</select><br><br>
+
+		<input type="submit" value="Confirmer">
 	</form>
 	<script src="/chambre.js"></script>
 </body>

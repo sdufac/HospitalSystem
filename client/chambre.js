@@ -61,6 +61,55 @@ async function form(){
 	}catch(error){
 		console.error(error);
 	}
+	
+	try{
+		const patients = await fetchPatients();
+		if(patients){
+			const datalistPatient = document.getElementById("spatient");
+			const inputPatient = document.getElementById("spatientinput");
+			const hiddenidpatient = document.getElementById("sidpatient");
+
+			patients.forEach(p => {
+				const opt = document.createElement("option");
+				opt.value = `${p.prenomPers} ${p.nomPers}`;
+
+				datalistPatient.appendChild(opt);
+			});
+
+			inputPatient.addEventListener("input", () => {
+				let value = inputPatient.value;
+
+				const[prenom,nom] = value.split(" ");
+
+				const foo = patients.find(p => {
+					return p.prenomPers === prenom && p.nomPers=== nom;
+				});
+
+				if(foo)hiddenidpatient.value = foo.idPers;
+			});
+		}
+	}catch(error){
+		console.error(error);
+	}
+
+	try{
+		const lits = await fetchLits();
+		if(lits){
+			const selectLit = document.getElementById("lit");
+			const idLit = document.getElementById("sidlit");
+
+			lits.forEach(l => {
+				const opt = document.createElement("option");
+				opt.value = l.idLit;
+				opt.innerHTML = l.numLit;
+
+				selectLit.appendChild(opt);
+			});
+
+		}
+	}catch(error){
+		console.error(error);
+	}
 }
 
 async function fetchRoomInfo(date){
@@ -92,5 +141,38 @@ async function fetchPerNet(){
 		return persnet;
 	}catch(error){
 		console.error("Erreur fetch persont",error);
+	}
+}
+
+async function fetchPatients(){
+	try{
+		const response = await fetch('/api/getpatientadmin');
+		if(!response.ok){
+			throw new Error ("Erreur recup patient");
+		}
+
+		const patients = await response.json();
+
+		return patients;
+	}catch(error){
+		console.error("Erreur lors de la récuperation des patients",error);
+	}
+}
+
+async function fetchLits(){
+	try{
+		const params = new URLSearchParams(window.location.search);
+		const roomId = params.get("id");
+		
+		const response = await fetch(`api/getlits?id=${roomId}`);
+		if(!response.ok){
+			throw new Error ("Erreur recup lit");
+		}
+
+		const lits = await response.json();
+
+		return lits;
+	}catch(error){
+		console.error("Erreur lors de la récuperation des lits",error);
 	}
 }
