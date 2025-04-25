@@ -252,7 +252,7 @@ router.get('/chambre',isAdmin, (req,res) => {
 	const date = req.query.date;
 	let html = "";
 
-	const sql = `SELECT l.numLit, s.dateAdmission, s.dateSortiePrevue, p.nomPers, p.prenomPers
+	const sql = `SELECT l.numLit,s.idSejour, s.dateAdmission, s.dateSortiePrevue, s.dateSortieReelle, p.nomPers, p.prenomPers
 		     FROM Chambre c
 		     JOIN Lit l ON c.idChambre = l.idChambre
 		     LEFT JOIN Sejour s ON l.idLit = s.idLit 
@@ -271,7 +271,21 @@ router.get('/chambre',isAdmin, (req,res) => {
 		rows.forEach(row => {
 			html += `<h2> Lit ${nb}</h2>`;
 			if(row.nomPers){
-				html+= `${row.nomPers} ${row.prenomPers}<br>`;
+				html+= `${row.nomPers} ${row.prenomPers}<br>
+					Date d'arrivée: ${row.dateAdmission}<br>
+					Date de sortie prévue: ${row.dateSortiePrevue}<br>`;
+
+				if(row.dateSortieReelle){
+					html+= `Date de sortie reelle: ${row.dateSortieReelle}`
+				}else{
+					html+= `<form method="POST" action="/sejour">
+							<input type="hidden" value="${row.idSejour}" id="id" name="id">
+							<input type="hidden" value="${id}" id="idchambre" name="idchambre">
+							<label for="date">Date de sortie: </label>
+							<input type="date" name="date" id="date">
+							<input type="submit" value="Confirmer">
+						</form></br>`
+				}
 			}else{
 				html+= `Aucun patient n'occupe actuellement le lit`;
 			}
@@ -332,7 +346,6 @@ router.get('/getpatientadmin',isAdmin,(req,res) => {
 
 router.get('/getlits', isAdmin, (req, res) => {
 	const id = req.query.id;
-	console.log("id chambre " + id);
 
 	const sql = `SELECT l.idLit, l.numLit
 		     FROM Lit l
@@ -353,7 +366,6 @@ router.get('/getlits', isAdmin, (req, res) => {
 
 			lits.push(lit);
 		})
-		console.log("LIT",lits);
 
 		return res.json(lits);
 	});

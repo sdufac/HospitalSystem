@@ -284,6 +284,21 @@ app.post('/addmedecin',isAdmin,(req,res) => {
 	}
 });
 
+app.post('/sejour',(req,res,next) => {
+	const sql = `UPDATE Sejour
+		     SET dateSortieReelle = ?
+		     WHERE idSejour = ?;`
+	try{
+		db.run(sql,[req.body.date,req.body.id], (err) => {
+			if(err)throw new Error("Erreur lors de la modification de la date de sortie réelle");
+		});
+	}catch(err){
+		next(err);
+	}
+
+	res.redirect(`/chambre?id=${req.body.idchambre}`);
+});
+
 //Middleware pour erreur 404
 app.use((req, res, next) => {
   res.status(404).send('<h1>Erreur 404</h1><p>Page non trouvée.</p>');
