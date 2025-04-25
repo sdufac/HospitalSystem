@@ -33,11 +33,6 @@ app.get('/login', (req, res) => {
 app.post('/login', (req,res,next) =>{
 	const {login, password} = req.body;
 
-	const sql = `SELECT * FROM Medecin m 
-		     JOIN Personne p ON p.idPers = m.idPers 
-                     JOIN Service s ON m.idService = s.idService 
-		     WHERE m.mdp = ? AND p.nomPers = ?`;
-
 	const sqlConnection = `SELECT p.idPers,p.nomPers,p.prenomPers,p.dNaisPers,p.numTelPers,p.adressePers,
 			       m.idPers AS idMedecin, m.specialite,
 			       pa.idPers AS idAdmin, pa.role, pa.datePrisePoste,
@@ -72,7 +67,6 @@ app.post('/login', (req,res,next) =>{
 				req.session.medecin = medecin;
 				res.redirect('/medecin');
 			}else if(row.idAdmin){
-				console.log("ADMIN");
 				const admin = {
 					idPers: row.idPers,
 					nomPers: row.nomPers,
@@ -86,6 +80,8 @@ app.post('/login', (req,res,next) =>{
 
 				req.session.admin = admin;
 				res.redirect('/admin');
+			}else{
+				throw new Error("Erreur lors de la connection");
 			}
 		});
 	}catch(err){
@@ -139,9 +135,6 @@ app.post('/addreunion',isMedecin, (req,res,err) => {
 	const sqlNec = `INSERT INTO Necessiter VALUES (?,?,?)`;
 
 	const dateHeure = req.body.datesoin + " " + req.body.heuresoin;
-	console.log("DATEHEURE: " + dateHeure);
-	console.log("IDINFPRESENT= " + req.body.idinfpresent);
-	console.log("IDINFRES= " + req.body.idinfres);
 
 	try{
 		db.run(sqlReunion,[req.body.formdate,req.body.objet], function(err) {
@@ -221,6 +214,70 @@ app.post('/addsejour',isAdmin,(req,res,next) => {
 				throw new Error("Erreur lors de l'insertion du sejour");
 			}
 			return res.redirect('/admin');
+		});
+	}catch(err){
+		next(err);
+	}
+});
+
+app.get('/addpatient',isAdmin,(req,res) => {
+	res.sendFile(path.join(__dirname, '../client/addpatient.html'));
+});
+
+app.post('/addpatient',isAdmin,(req,res,next) => {
+	const sqlPers = `INSERT INTO Personne (nomPers,prenomPers,dNaisPers,numTelPers,adressePers)
+			 VALUES(?,?,?,?,?);`
+	
+	const sqlPatient = `INSERT INTO Patient VALUES(?,?,?);`
+
+	try{
+		db.run(sqlPers,[req.body.nompers,req.body.prenompers,req.body.dnaispers,req.body.numtelpers,req.body.adressepers],
+		function (err) {
+			if(err){
+				throw new Error("erreur lors de l'insertion de la personne");
+			}
+
+			const id = this.lastID;
+
+			db.run(sqlPatient,[id,req.body.numdossiermed,req.body.motifhoospitalisation], (err) => {
+				if(err){
+					throw new Error("erreur lors de l'insertion du patient");
+				}
+
+				return res.redirect('/admin');
+			});
+		});
+	}catch(err){
+		next(err);
+	}
+});
+
+app.get('/addmedecin',isAdmin,(req,res) => {
+	res.sendFile(path.join(__dirname, '../client/addmedecin.html'));
+});
+
+app.post('/addmedecin',isAdmin,(req,res) => {
+	const sqlPers = `INSERT INTO Personne (nomPers,prenomPers,dNaisPers,numTelPers,adressePers)
+			 VALUES(?,?,?,?,?);`
+	
+	const sqlPatient = `INSERT INTO Medecin VALUES(?,?,?,?);`
+
+	try{
+		db.run(sqlPers,[req.body.nompers,req.body.prenompers,req.body.dnaispers,req.body.numtelpers,req.body.adressepers],
+		function (err) {
+			if(err){
+				throw new Error("erreur lors de l'insertion de la personne");
+			}
+
+			const id = this.lastID;
+
+			db.run(sqlPatient,[id,req.body.specialite,req.body.mdp,req.body.service], (err) => {
+				if(err){
+					throw new Error("erreur lors de l'insertion du patient");
+				}
+
+				return res.redirect('/admin');
+			});
 		});
 	}catch(err){
 		next(err);

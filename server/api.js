@@ -359,4 +359,31 @@ router.get('/getlits', isAdmin, (req, res) => {
 	});
 });
 
+router.get('/getservice',(req,res,next) => {
+	const sql = `SELECT s.idService, s.nomService 
+		     FROM Service s`
+
+	try{
+		db.all(sql,(err,rows) => {
+			if(err){
+				throw new Error("Erreur lors de la récuperation des services");
+			}
+
+			const services = [];
+			rows.forEach(row => {
+				const service = {
+					idService: row.idService,
+					nomService: row.nomService
+				}
+
+				services.push(service);
+			})
+
+			return res.json(services);
+		});
+	}catch(err){
+		next(err);
+	}
+})
+
 module.exports = router;

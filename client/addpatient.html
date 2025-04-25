@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Ajout Patient</title>
+	<link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<h1 id="title">Nouveau patient</h1><hr>
+	<h2 id="date"></h2>
+	<div id="formulaire">
+		<form action="/addpatient" method="POST" id="form">
+			<label for="nompers">Nom</label><br>
+			<input type="text" id="nompers" name="nompers"><br><br>
+
+			<label for="prenompers">Prenom</label><br>
+			<input type="text" id="prenompers" name="prenompers"><br><br>
+
+			<label for="dnaispers">Date de naissance</label><br>
+			<input type="date" id="dnaispers" name="dnaispers"><br><br>
+
+			<label for="numtelpers">Numéro de telephone</label><br>
+			<input type="text" id="numtelpers" name="numtelpers"><br><br>
+
+			<label for="adressepers">Adresse</label><br>
+			<input type="text" id="adressepers" name="adressepers"><br><br>
+
+			<label for="numdossiermed">Numero du dossier médical</label><br>
+			<input type="text" id="numdossiermed" name="numdossiermed"><br><br>
+
+			<label for="motifhospitalisation">Motif de l'hospitalisation</label><br>
+			<input type="text" id="motifhospitalisation" name="motifhospitalisation"><br><br>
+
+			<input type="submit" value="Confirmer">
+		</form>
+	</div>
+	<!-- <script src="addpatient.js"> </script> -->
+</body>
+</html>
