@@ -90,7 +90,7 @@ router.get('/patient',isMedecin ,(req,res)=>{
 			if(err){
 				console.error(err);
 				return res.status(500).send("Erreur lors de la recup des visites du patient");
-			}else if(!row){
+			}else if(!rows || rows.length === 0){
 				html+=`<h2>Visites</h2><br>
 				       Ce patient n'a pas encore fait de visite.`
 			}else{
@@ -111,68 +111,66 @@ router.get('/patient',isMedecin ,(req,res)=>{
 				});
 
 				html += `</table>`
+			}
+			db.all(sqlSoins,id,(err,rows) => {
+				if(err){
+					console.error(err);
+					return res.status(500).send("Erreur lors de la recup des visites du patient");
+				}else if(!rows || rows.length === 0){
+					html+=`<h2>Soins</h2><br>
+					       Ce patient n'a pas encore reçu de soins`;
+				}else{
+					html+=`<h2>Soins</h2><br>
+						<table>
+						<tr>
+							<th>Date / Heure</th>
+							<th>Description</th>
+							<th>Medicament<th>
+							<th>Quantité<th>
+						</tr>`;
 
-				db.all(sqlSoins,id,(err,rows) => {
+					rows.forEach(row =>{
+						html += `<tr>
+								<td>${row.dateHeureSoin}</td>
+								<td>${row.descriptionSoin}</td>
+								<td>${row.nomMedicament}</td>
+								<td>${row.quantite}</td>
+							 </tr>`;
+					});
+					html+= `</table>`;
+				}
+				db.all(sqlAntecedent,id, (err,rows) => {
 					if(err){
 						console.error(err);
-						return res.status(500).send("Erreur lors de la recup des visites du patient");
-					}else if(!row){
+						return res.status(500).send("Erreur lors de la recup des antecendents du patient");
+					}else if(!rows || rows.length === 0){
 						html+=`<h2>Soins</h2><br>
-						       Ce patient n'a pas encore reçu de soins`;
+						       Ce patient n'a pas d'antecedents`;
 					}else{
-						html+=`<h2>Soins</h2><br>
+
+						html+=`<h2>Antecedents</h2><br>
 							<table>
 							<tr>
-								<th>Date / Heure</th>
+								<th>Type</th>
 								<th>Description</th>
-								<th>Medicament<th>
-								<th>Quantité<th>
+								<th>Date<th>
 							</tr>`;
 
-						rows.forEach(row =>{
+						rows.forEach(row => {
 							html += `<tr>
-									<td>${row.dateHeureSoin}</td>
-									<td>${row.descriptionSoin}</td>
-									<td>${row.nomMedicament}</td>
-									<td>${row.quantite}</td>
+									<td>${row.typeAntecedent}</td>
+									<td>${row.description}</td>
+									<td>${row.dateDeclaration}</td>
 								 </tr>`;
 						});
-						html+= `</table>`;
 
-						db.all(sqlAntecedent,id, (err,rows) => {
-							if(err){
-								console.error(err);
-								return res.status(500).send("Erreur lors de la recup des antecendents du patient");
-							}else if(!row){
-								html+=`<h2>Soins</h2><br>
-								       Ce patient n'a pas d'antecedents`;
-							}else{
-
-								html+=`<h2>Antecedents</h2><br>
-									<table>
-									<tr>
-										<th>Type</th>
-										<th>Description</th>
-										<th>Date<th>
-									</tr>`;
-
-								rows.forEach(row => {
-									html += `<tr>
-											<td>${row.typeAntecedent}</td>
-											<td>${row.description}</td>
-											<td>${row.dateDeclaration}</td>
-										 </tr>`;
-								});
-
-								html += `</table><hr>
-									 <button onclick='window.location.href="/addvisite?id=${id}"'>Visite</button>
-									 <button onclick='window.location.href="/addreunion?id=${id}"'>Reunion</button>`;
-								res.send(html);
-							}
-						});
+						html += `</table>`;
 					}
+					html+= `<hr><button onclick='window.location.href="/addvisite?id=${id}"'>Visite</button>
+							 <button onclick='window.location.href="/addreunion?id=${id}"'>Reunion</button>`
+					res.send(html);
 				});
-			}
+			});
 		});
 	});
 });
