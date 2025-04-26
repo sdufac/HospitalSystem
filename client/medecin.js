@@ -9,7 +9,7 @@ async function display(){
 		const medecin = await fetchMedecin();
 		if(medecin){
 			title.innerHTML = "Bonjour " + medecin.prenomPers + " " + medecin.nomPers;
-			patient.innerHTML = "Patient du service " + medecin.service;
+			patient.innerHTML = "Patients actuellement au service " + medecin.service + " :";
 		}
 	}catch(error){
 		console.error("Erreur client medecin", error);
@@ -18,11 +18,17 @@ async function display(){
 	try{
 		const patients = await fetchPatients();
 		if(patients){
-			patients.forEach(p =>{
-				patientDiv.innerHTML += p.nomPers + ` ` + p.prenomPers
-							+ `<button onclick="window.location.href='/patient?id=`+
-							p.idPers +`'">+ d'info</button><br>`;
-			});
+			if (patients.length === 0){
+				patientDiv.innerHTML += `Aucun patient n'est acutellement en séjour dans votre service.`;
+			}else{
+				patients.forEach(p =>{
+					patientDiv.innerHTML += p.nomPers + ` ` + p.prenomPers
+								+ `<button onclick="window.location.href='/patient?id=`+
+								p.idPers +`'">+ d'info</button><br>`;
+				});
+			}
+		}else{
+			throw new Error("Erreur lors de la recuperation des patiens du service");
 		}
 	}catch(error){
 		console.error("Erreur client patients", error);
@@ -46,7 +52,7 @@ async function fetchMedecin(){
 
 async function fetchPatients(){
 	try{
-		const response = await fetch('/api/getpatients');
+		const response = await fetch('/api/patientservice');
 
 		if(!response.ok){
 			throw new Error('Erreur recuperation patient');

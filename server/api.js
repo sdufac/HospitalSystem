@@ -8,16 +8,22 @@ router.get('/getmedecin',isMedecin, (req,res) => {
 	res.json(req.session.medecin);
 });
 
-router.get('/getpatients', isMedecin, (req,res) =>{
+router.get('/patientservice', isMedecin, (req,res) =>{
 	const sql = `SELECT DISTINCT p.idPers, p.nomPers, p.prenomPers, p.dNaisPers, p.numTelPers, p.adressePers, pa.numDossierMed, pa.motifHospitalisation
 		    FROM Patient pa 
 		    JOIN Personne p ON pa.idPers = p.idPers 
-                    JOIN Visite v ON v.idPatient = pa.idPers
-		    JOIN Medecin m ON v.idMedecin = m.idPers
-		    JOIN Service s ON m.idService = s.idService
-		    WHERE s.nomService = ?`
+		    JOIN Sejour s ON pa.idPers = s.idPatient
+		    JOIN Lit l ON s.idLit = l.idLit
+		    JOIN Chambre c ON l.idChambre = c.idChambre
+		    WHERE c.idService = ? 
+		    AND (s.dateSortieReelle IS NULL OR s.dateSortieReelle > ?)
+		    AND s.dateAdmission <= ?;`;
 
-	db.all(sql,req.session.medecin.service, (err,rows) =>{
+	const today = new Date();
+	const date = today.toISOString().split('T')[0];
+	console.log(date);
+
+	db.all(sql,[req.session.medecin.idService,date,date], (err,rows) =>{
 		if(err){
 			console.error(err.message);
 			return res.status(500).send("Erreur lors de la recup des infos des patients");
@@ -217,10 +223,12 @@ router.get('/getrooms',isAdmin,(req,res) => {
 
 		     LEFT JOIN Nettoyage n ON n.idChambre = c.idChambre
 
+		     WHERE c.idService = ?
+
 		     GROUP BY c.idChambre, c.numChambre, c.capacite
 		     ORDER BY c.numChambre;`
 
-	db.all(sql,(err,rows) =>{
+	db.all(sql,req.session.admin.idService,(err,rows) =>{
 		if(err){
 			console.error(err);
 		}

@@ -15,13 +15,14 @@ INSERT INTO Personne (idPers, nomPers, prenomPers, dNaisPers, numTelPers, adress
 (13, 'Renard', 'Julien', '1989-06-15', '0623456789', '8 avenue Lumière, Lille'), -- Patient
 (14, 'Benoit', 'Sophie', '1978-09-05', '0634567890', '22 rue des Champs, Reims'), -- Patient
 (15, 'Lopez', 'Antoine', '1994-03-21', '0645678901', '77 avenue des Prés, Tours'), -- Patient
-(16, 'Meunier', 'Alice', '1986-12-30', '0656789012', '99 boulevard Verdun, Nancy'); -- Patient
-
+(16, 'Meunier', 'Alice', '1986-12-30', '0656789012', '99 boulevard Verdun, Nancy'), -- Patient
+(17, 'c', 'Cam', '1970-03-03', '0633221100', '50 rue Montagne, Strasbourg'), -- Admin
+(18, 'd', 'Jules', '1970-03-03', '0633221100', '50 rue Montagne, Strasbourg'); -- Admin
 -- SERVICES
 INSERT INTO Service (idService, nomService, etageService, idMedecinRef, idAdminRes) VALUES
-(1, 'Cardiologie', 2, 1, 10),
-(2, 'Neurologie', 3, 2, 10),
-(3, 'Chirurgie', 1, 3, 10);
+(1, 'Cardiologie', 1, 1, 10),
+(2, 'Neurologie', 2, 2, 17),
+(3, 'Chirurgie', 3, 3, 18);
 
 -- MEDECINS
 INSERT INTO Medecin (idPers, specialite, mdp, idService) VALUES
@@ -37,7 +38,9 @@ INSERT INTO Infirmier (idPers, datePrisePoste, idService) VALUES
 
 -- ADMIN
 INSERT INTO PersonnelAdmin (idPers, mdp, role, datePrisePoste) VALUES
-(10, 'b', 'Responsable', '2010-02-01');
+(10, 'b', 'Responsable', '2010-02-01'),
+(17, 'c', 'Responsable', '2010-02-01'),
+(18, 'd', 'Responsable', '2010-02-01');
 
 -- NETTOYAGE
 INSERT INTO PersonnelNettoyage (idPers, role, datePrisePoste) VALUES
@@ -57,99 +60,170 @@ INSERT INTO Patient (idPers, numDossierMed, motifHospitalisation) VALUES
 -- CHAMBRES
 INSERT INTO Chambre (idChambre, numChambre, capacite, idService) VALUES
 (1, 'A101', 2, 1),
-(2, 'B202', 4, 2),
-(3, 'C303', 6, 3);
+(2, 'A102', 2, 1),
+(3, 'A103', 4, 1),
+(4, 'A104', 4, 1),
+(5, 'A105', 6, 1),
+(6, 'B201', 2, 2),
+(7, 'B202', 2, 2),
+(8, 'B203', 4, 2),
+(9, 'B204', 4, 2),
+(10, 'B205', 6, 2),
+(11, 'C201', 2, 3),
+(12, 'C202', 2, 3),
+(13, 'C203', 4, 3),
+(14, 'C204', 4, 3),
+(15, 'C205', 6, 3);
 
 -- LITS
 INSERT INTO Lit (idLit, numLit, idChambre) VALUES
-(1, 'L1', 1),
-(2, 'L2', 1),
-(3, 'L3', 2),
-(4, 'L4', 2),
-(5, 'L5', 2),
-(6, 'L6', 2),
-(7, 'L7', 3),
-(8, 'L8', 3),
-(9, 'L9', 3),
-(10, 'L10', 3),
-(11, 'L11', 3),
-(12, 'L12', 3);
+-- Service 1
+(1, 'L11', 1),
+(2, 'L12', 1),
 
--- SEJOURS
-INSERT INTO Sejour (idSejour, dateAdmission, dateSortiePrevue, dateSortieReelle, idPatient, idLit, idAdminAffectation) VALUES
-(1, '2023-05-01', '2023-05-15', '2023-05-14', 7, 1, 10),
-(2, '2023-06-10', '2023-06-20', '2023-06-19', 8, 2, 10),
-(3, '2023-07-01', '2023-07-10', '2023-07-09', 9, 3, 10),
-(4, '2023-07-15', '2023-07-25', NULL, 12, 4, 10),
-(5, '2023-08-01', '2023-08-10', NULL, 13, 5, 10),
-(6, '2023-08-15', '2023-08-20', NULL, 14, 6, 10),
-(7, '2023-08-21', '2023-08-30', NULL, 15, 7, 10),
-(8, '2023-09-01', '2023-09-10', NULL, 16, 8, 10);
+(3, 'L13', 2),
+(4, 'L14', 2),
 
--- VISITES (3 par patient → 8 patients → 24 visites)
-INSERT INTO Visite (idVisite, dateVisite, compteRendu, idMedecin, idPatient) VALUES
--- Patient 7
-(1, '2023-05-02', 'Suivi cardiaque', 1, 7),
-(2, '2023-05-06', 'Contrôle tension', 1, 7),
-(3, '2023-05-10', 'Électrocardiogramme', 1, 7),
--- Patient 8
-(4, '2023-06-11', 'IRM cérébrale', 2, 8),
-(5, '2023-06-13', 'EEG', 2, 8),
-(6, '2023-06-18', 'Consultation mémoire', 2, 8),
--- Patient 9
-(7, '2023-07-02', 'Suivi post-chirurgie', 3, 9),
-(8, '2023-07-05', 'Retrait points', 3, 9),
-(9, '2023-07-08', 'Mobilité genou', 3, 9),
--- Patient 12
-(10, '2023-07-16', 'Contrôle infection', 1, 12),
-(11, '2023-07-18', 'Radio poumons', 1, 12),
-(12, '2023-07-22', 'Consultation de suivi', 1, 12),
--- Patient 13
-(13, '2023-08-02', 'Bilan douleur', 2, 13),
-(14, '2023-08-05', 'IRM lombaire', 2, 13),
-(15, '2023-08-08', 'Prescription médicamenteuse', 2, 13),
--- Patient 14
-(16, '2023-08-16', 'Suivi post-AVC', 2, 14),
-(17, '2023-08-17', 'EEG', 2, 14),
-(18, '2023-08-18', 'Bilan cognitif', 2, 14),
--- Patient 15
-(19, '2023-08-22', 'Analyse hépatique', 3, 15),
-(20, '2023-08-25', 'Échographie foie', 3, 15),
-(21, '2023-08-28', 'Consultation hépatologue', 3, 15),
--- Patient 16
-(22, '2023-09-02', 'Suivi rééducation', 3, 16),
-(23, '2023-09-05', 'Évaluation mobilité', 3, 16),
-(24, '2023-09-08', 'Contrôle douleur', 3, 16);
+(5, 'L15', 3),
+(6, 'L16', 3),
+(7, 'L17', 3),
+(8, 'L18', 3),
 
--- SOINS (2 par patient → 8 patients → 16 soins)
-INSERT INTO Soin (idSoin, dateHeureSoin, descriptionSoin, idInfirmier, idPatient, idReunion) VALUES
-(1, '2023-05-03 10:00', 'Changement pansement', 4, 7, 1),
-(2, '2023-05-05 09:30', 'Injection anticoagulants', 4, 7, 1),
-(3, '2023-06-12 11:00', 'Surveillance post-IRM', 5, 8, 2),
-(4, '2023-06-17 14:30', 'Préparation EEG', 5, 8, 2),
-(5, '2023-07-03 08:00', 'Changement pansement post-op', 6, 9, 3),
-(6, '2023-07-07 10:15', 'Prise de tension', 6, 9, 3),
-(7, '2023-07-17 09:00', 'Aérosol', 4, 12, 1),
-(8, '2023-07-20 10:30', 'Prise de température', 4, 12, 1),
-(9, '2023-08-03 11:00', 'Injection analgésique', 5, 13, 2),
-(10, '2023-08-06 09:30', 'Massage lombaire', 5, 13, 2),
-(11, '2023-08-16 15:00', 'Aide motricité', 5, 14, 2),
-(12, '2023-08-18 08:45', 'Prise de médicaments', 5, 14, 2),
-(13, '2023-08-23 10:00', 'Injection hépatique', 6, 15, 3),
-(14, '2023-08-27 10:00', 'Surveillance état général', 6, 15, 3),
-(15, '2023-09-03 11:30', 'Rééducation jambe', 6, 16, 3),
-(16, '2023-09-06 09:30', 'Kinésithérapie', 6, 16, 3);
+(9, 'L19', 4),
+(10, 'L110', 4),
+(11, 'L111', 4),
+(12, 'L112', 4),
 
--- EXAMENS (1 par patient min)
-INSERT INTO Examen (idExamen, typeExamen, description, idVisite) VALUES
-(1, 'ECG', 'Électrocardiogramme', 3),
-(2, 'IRM', 'IRM cérébrale', 4),
-(3, 'Radio', 'Radio du genou', 7),
-(4, 'Radio', 'Radio des poumons', 11),
-(5, 'IRM', 'IRM lombaire', 14),
-(6, 'EEG', 'Électroencéphalogramme', 17),
-(7, 'Écho', 'Échographie du foie', 20),
-(8, 'Éval.', 'Bilan mobilité', 23);
+(13, 'L113', 5),
+(14, 'L114', 5),
+(15, 'L115', 5),
+(16, 'L116', 5),
+(17, 'L117', 5),
+(18, 'L118', 5),
+
+-- Service 2
+(19, 'L21', 6),
+(20, 'L22', 6),
+
+(21, 'L23', 7),
+(22, 'L24', 7),
+
+(23, 'L25', 8),
+(24, 'L26', 8),
+(25, 'L27', 8),
+(26, 'L28', 8),
+
+(27, 'L29', 9),
+(28, 'L210', 9),
+(29, 'L211', 9),
+(30, 'L212', 9),
+
+(31, 'L213', 10),
+(32, 'L214', 10),
+(33, 'L215', 10),
+(34, 'L216', 10),
+(35, 'L217', 10),
+(36, 'L218', 10),
+
+-- Service 3
+(37, 'L31', 11),
+(38, 'L32', 11),
+
+(39, 'L33', 12),
+(40, 'L34', 12),
+
+(41, 'L35', 13),
+(42, 'L36', 13),
+(43, 'L37', 13),
+(44, 'L38', 13),
+
+(45, 'L39', 14),
+(46, 'L310', 14),
+(47, 'L311', 14),
+(48, 'L312', 14),
+
+(49, 'L313', 15),
+(50, 'L314', 15),
+(55, 'L315', 15),
+(56, 'L316', 15),
+(57, 'L317', 15),
+(58, 'L318', 15);
+
+-- -- SEJOURS
+-- INSERT INTO Sejour (idSejour, dateAdmission, dateSortiePrevue, dateSortieReelle, idPatient, idLit, idAdminAffectation) VALUES
+-- (1, '2023-05-01', '2023-05-15', '2023-05-14', 7, 1, 10),
+-- (2, '2023-06-10', '2023-06-20', '2023-06-19', 8, 2, 10),
+-- (3, '2023-07-01', '2023-07-10', '2023-07-09', 9, 3, 10),
+-- (4, '2023-07-15', '2023-07-25', NULL, 12, 4, 10),
+-- (5, '2023-08-01', '2023-08-10', NULL, 13, 5, 10),
+-- (6, '2023-08-15', '2023-08-20', NULL, 14, 6, 10),
+-- (7, '2023-08-21', '2023-08-30', NULL, 15, 7, 10),
+-- (8, '2023-09-01', '2023-09-10', NULL, 16, 8, 10);
+
+-- -- VISITES (3 par patient → 8 patients → 24 visites)
+-- INSERT INTO Visite (idVisite, dateVisite, compteRendu, idMedecin, idPatient) VALUES
+-- -- Patient 7
+-- (1, '2023-05-02', 'Suivi cardiaque', 1, 7),
+-- (2, '2023-05-06', 'Contrôle tension', 1, 7),
+-- (3, '2023-05-10', 'Électrocardiogramme', 1, 7),
+-- -- Patient 8
+-- (4, '2023-06-11', 'IRM cérébrale', 2, 8),
+-- (5, '2023-06-13', 'EEG', 2, 8),
+-- (6, '2023-06-18', 'Consultation mémoire', 2, 8),
+-- -- Patient 9
+-- (7, '2023-07-02', 'Suivi post-chirurgie', 3, 9),
+-- (8, '2023-07-05', 'Retrait points', 3, 9),
+-- (9, '2023-07-08', 'Mobilité genou', 3, 9),
+-- -- Patient 12
+-- (10, '2023-07-16', 'Contrôle infection', 1, 12),
+-- (11, '2023-07-18', 'Radio poumons', 1, 12),
+-- (12, '2023-07-22', 'Consultation de suivi', 1, 12),
+-- -- Patient 13
+-- (13, '2023-08-02', 'Bilan douleur', 2, 13),
+-- (14, '2023-08-05', 'IRM lombaire', 2, 13),
+-- (15, '2023-08-08', 'Prescription médicamenteuse', 2, 13),
+-- -- Patient 14
+-- (16, '2023-08-16', 'Suivi post-AVC', 2, 14),
+-- (17, '2023-08-17', 'EEG', 2, 14),
+-- (18, '2023-08-18', 'Bilan cognitif', 2, 14),
+-- -- Patient 15
+-- (19, '2023-08-22', 'Analyse hépatique', 3, 15),
+-- (20, '2023-08-25', 'Échographie foie', 3, 15),
+-- (21, '2023-08-28', 'Consultation hépatologue', 3, 15),
+-- -- Patient 16
+-- (22, '2023-09-02', 'Suivi rééducation', 3, 16),
+-- (23, '2023-09-05', 'Évaluation mobilité', 3, 16),
+-- (24, '2023-09-08', 'Contrôle douleur', 3, 16);
+
+-- -- SOINS (2 par patient → 8 patients → 16 soins)
+-- INSERT INTO Soin (idSoin, dateHeureSoin, descriptionSoin, idInfirmier, idPatient, idReunion) VALUES
+-- (1, '2023-05-03 10:00', 'Changement pansement', 4, 7, 1),
+-- (2, '2023-05-05 09:30', 'Injection anticoagulants', 4, 7, 1),
+-- (3, '2023-06-12 11:00', 'Surveillance post-IRM', 5, 8, 2),
+-- (4, '2023-06-17 14:30', 'Préparation EEG', 5, 8, 2),
+-- (5, '2023-07-03 08:00', 'Changement pansement post-op', 6, 9, 3),
+-- (6, '2023-07-07 10:15', 'Prise de tension', 6, 9, 3),
+-- (7, '2023-07-17 09:00', 'Aérosol', 4, 12, 1),
+-- (8, '2023-07-20 10:30', 'Prise de température', 4, 12, 1),
+-- (9, '2023-08-03 11:00', 'Injection analgésique', 5, 13, 2),
+-- (10, '2023-08-06 09:30', 'Massage lombaire', 5, 13, 2),
+-- (11, '2023-08-16 15:00', 'Aide motricité', 5, 14, 2),
+-- (12, '2023-08-18 08:45', 'Prise de médicaments', 5, 14, 2),
+-- (13, '2023-08-23 10:00', 'Injection hépatique', 6, 15, 3),
+-- (14, '2023-08-27 10:00', 'Surveillance état général', 6, 15, 3),
+-- (15, '2023-09-03 11:30', 'Rééducation jambe', 6, 16, 3),
+-- (16, '2023-09-06 09:30', 'Kinésithérapie', 6, 16, 3);
+
+-- -- EXAMENS (1 par patient min)
+-- INSERT INTO Examen (idExamen, typeExamen, description, idVisite) VALUES
+-- (1, 'ECG', 'Électrocardiogramme', 3),
+-- (2, 'IRM', 'IRM cérébrale', 4),
+-- (3, 'Radio', 'Radio du genou', 7),
+-- (4, 'Radio', 'Radio des poumons', 11),
+-- (5, 'IRM', 'IRM lombaire', 14),
+-- (6, 'EEG', 'Électroencéphalogramme', 17),
+-- (7, 'Écho', 'Échographie du foie', 20),
+-- (8, 'Éval.', 'Bilan mobilité', 23);
 
 -- MEDICAMENTS
 INSERT INTO Medicament (idMedicament, nomMedicament) VALUES
@@ -160,48 +234,48 @@ INSERT INTO Medicament (idMedicament, nomMedicament) VALUES
 (5, 'Codéine'),
 (6, 'Metformine');
 
--- NECESSITER (liaison soins-médicaments)
-INSERT INTO Necessiter (idSoin, idMedicament, quantite) VALUES
-(1, 1, '2 comprimés'),
-(2, 2, '1 injection'),
-(3, 3, '1 dose'),
-(4, 1, '1 comprimé'),
-(5, 2, '1 dose'),
-(6, 1, '2 comprimés'),
-(7, 4, '1 nébuliseur'),
-(8, 3, '1 prise'),
-(9, 5, '1 injection'),
-(10, 3, '1 pommade'),
-(11, 6, '1 comprimé'),
-(12, 1, '2 comprimés'),
-(13, 5, '1 injection'),
-(14, 3, '1 comprimé'),
-(15, 6, '1 dose'),
-(16, 4, '1 injection');
+-- -- NECESSITER (liaison soins-médicaments)
+-- INSERT INTO Necessiter (idSoin, idMedicament, quantite) VALUES
+-- (1, 1, '2 comprimés'),
+-- (2, 2, '1 injection'),
+-- (3, 3, '1 dose'),
+-- (4, 1, '1 comprimé'),
+-- (5, 2, '1 dose'),
+-- (6, 1, '2 comprimés'),
+-- (7, 4, '1 nébuliseur'),
+-- (8, 3, '1 prise'),
+-- (9, 5, '1 injection'),
+-- (10, 3, '1 pommade'),
+-- (11, 6, '1 comprimé'),
+-- (12, 1, '2 comprimés'),
+-- (13, 5, '1 injection'),
+-- (14, 3, '1 comprimé'),
+-- (15, 6, '1 dose'),
+-- (16, 4, '1 injection');
 
--- REUNIONS
-INSERT INTO Reunion (idReunion, dateReunion, objetReunion) VALUES
-(1, '2023-05-01', 'Suivi des soins post-op'),
-(2, '2023-06-10', 'Mise à jour protocole neurologie'),
-(3, '2023-07-01', 'Répartition des chambres');
+-- -- REUNIONS
+-- INSERT INTO Reunion (idReunion, dateReunion, objetReunion) VALUES
+-- (1, '2023-05-01', 'Suivi des soins post-op'),
+-- (2, '2023-06-10', 'Mise à jour protocole neurologie'),
+-- (3, '2023-07-01', 'Répartition des chambres');
 
--- PARTICIPATION REUNIONS
-INSERT INTO ParticipationReunion (idReunion, idMedecin, idInfirmier) VALUES
-(1, 1, 4),
-(2, 2, 5),
-(3, 3, 6);
+-- -- PARTICIPATION REUNIONS
+-- INSERT INTO ParticipationReunion (idReunion, idMedecin, idInfirmier) VALUES
+-- (1, 1, 4),
+-- (2, 2, 5),
+-- (3, 3, 6);
 
--- NETTOYAGE
-INSERT INTO Nettoyage (idNettoyage, dateNettoyage, idChambre) VALUES
-(1, '2023-05-02', 1),
-(2, '2023-06-12', 2),
-(3, '2023-07-05', 3);
+-- -- NETTOYAGE
+-- INSERT INTO Nettoyage (idNettoyage, dateNettoyage, idChambre) VALUES
+-- (1, '2023-05-02', 1),
+-- (2, '2023-06-12', 2),
+-- (3, '2023-07-05', 3);
 
--- EFFECTUER NETTOYAGE
-INSERT INTO EffectuerNettoyage (idNettoyage, idPersNettoyage) VALUES
-(1, 11),
-(2, 11),
-(3, 11);
+-- -- EFFECTUER NETTOYAGE
+-- INSERT INTO EffectuerNettoyage (idNettoyage, idPersNettoyage) VALUES
+-- (1, 11),
+-- (2, 11),
+-- (3, 11);
 
 -- ANTECEDENTS (1 par patient)
 INSERT INTO Antecedent (idAntecedent, typeAntecedent, description, dateDeclaration, idPatient) VALUES

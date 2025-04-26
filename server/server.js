@@ -36,11 +36,16 @@ app.post('/login', (req,res,next) =>{
 	const sqlConnection = `SELECT p.idPers,p.nomPers,p.prenomPers,p.dNaisPers,p.numTelPers,p.adressePers,
 			       m.idPers AS idMedecin, m.specialite,
 			       pa.idPers AS idAdmin, pa.role, pa.datePrisePoste,
-			       s.nomService 
+			       s.nomService AS serviceMedecin,
+			       s.idService AS idServiceMedecin,
+			       s2.nomService AS serviceAdmin,
+			       s2.idService AS idServiceAdmin
+
 			       FROM Personne p
 			       LEFT JOIN Medecin m ON p.idPers = m.idPers AND m.mdp = ?
 			       LEFT JOIN PersonnelAdmin pa ON p.idPers = pa.idPers AND pa.mdp = ?
 			       LEFT JOIN Service s ON m.idService = s.idService
+			       LEFT JOIN Service s2 ON p.idPers = s2.idAdminRes
 			       WHERE p.nomPers = ?;`
 
 	try{
@@ -52,17 +57,18 @@ app.post('/login', (req,res,next) =>{
 				res.redirect('/login');
 			}else if(row.idMedecin){
 				//Creation d'objet
-				const medecin = new Medecin(
-				    row.idPers,
-				    row.nomPers,
-				    row.prenomPers,
-				    row.dNaisPers,
-				    row.numTelPers,
-				    row.adressePers,
-				    row.specialite,
-				    row.mdp,
-				    row.nomService
-				);
+				const medecin = {
+					idPers: row.idPers,
+					nomPers: row.nomPers,
+					prenomPers: row.prenomPers,
+					dNaisPers: row.dNaisPers,
+					numTelPers: row.numTelPers,
+					adressePers: row.adressePers,
+					specialite: row.specialite,
+					mdp: row.mdp,
+					service: row.serviceMedecin,
+					idService: row.idServiceMedecin
+				}
 
 				req.session.medecin = medecin;
 				res.redirect('/medecin');
@@ -75,7 +81,9 @@ app.post('/login', (req,res,next) =>{
 					numTelPers: row.numTelPers,
 					adressePers: row.adressePers,
 					role: row.role,
-					datePrisePoste: row.datePrisePoste
+					datePrisePoste: row.datePrisePoste,
+					service: row.serviceAdmin,
+					idService: row.idServiceAdmin
 				}
 
 				req.session.admin = admin;
