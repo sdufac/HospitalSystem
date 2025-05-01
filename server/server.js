@@ -272,6 +272,9 @@ app.post('/addadmin',isAdmin,(req,res) => {
 	
 	const sqlAdmin = `INSERT INTO PersonnelAdmin VALUES(?,?,?,?);`
 
+	const sqlService = `UPDATE Service SET idAdminRes = ?
+			    WHERE idService = ?;`
+
 	try{
 		db.run(sqlPers,[req.body.nompers,req.body.prenompers,req.body.dnaispers,req.body.numtelpers,req.body.adressepers],
 		function (err) {
@@ -281,12 +284,17 @@ app.post('/addadmin',isAdmin,(req,res) => {
 
 			const id = this.lastID;
 
-			db.run(sqlAdmin,[id,req.body.mdp,req.body.role,req.body.service], (err) => {
+			db.run(sqlAdmin,[id,req.body.mdp,req.body.role,req.body.datePrisePoste], (err) => {
 				if(err){
-					throw new Error("erreur lors de l'insertion de l'admin");
+					throw new Error("erreur lors de l'insertion de l'admin",err);
 				}
 
-				return res.redirect('/admin');
+				db.run(sqlService,[id,req.body.service],(err) => {
+					if(err){
+						throw new Error("erreur lors de l'insertion de l'admin service",err);
+					}
+					return res.redirect('/admin');
+				});
 			});
 		});
 	}catch(err){
