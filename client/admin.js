@@ -49,7 +49,7 @@ async function display(){
 
 async function fetchRooms(){
 	try{
-		const response = await fetch('/api/getrooms');
+		const response = await fetch('/api/chambres');
 
 		if(!response.ok){
 			throw new Error('Erreur recuperation données des chambres');

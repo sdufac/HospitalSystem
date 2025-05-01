@@ -18,4 +18,13 @@ function isAdmin(req,res,next){
 	}
 }
 
-module.exports = {isMedecin, isAdmin};
+function isLogged(req,res,next){
+	if(req.session && (req.session.admin || req.session.medecin)){
+		return next();
+	}else{
+		console.log("Connection requise");
+		return res.redirect('/login');
+	}
+}
+
+module.exports = {isMedecin, isAdmin, isLogged};

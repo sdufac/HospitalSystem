@@ -3,8 +3,9 @@ const db = require('./db.js');
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
-const {isMedecin,isAdmin} = require('./tool.js');
+const {isMedecin,isAdmin, isLogged} = require('./tool.js');
 const apiRoutes = require('./api.js');
+const sqlite3 = require('sqlite3').verbose();
 
 const app = express();
 const PORT = 3000;
@@ -27,6 +28,8 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
+	delete req.session.admin;
+	delete req.session.medecin;
 	res.sendFile(path.join(__dirname, '../client/connection.html'));
 });
 
@@ -101,16 +104,15 @@ app.get('/medecin',isMedecin,(req,res)=> {
 	res.sendFile(path.join(__dirname, '../client/medecin.html'));
 });
 
-app.get('/patient',isMedecin,(req,res) => {
+app.get('/patient/:id',isMedecin,(req,res) => {
 	res.sendFile(path.join(__dirname,'../client/patient.html'));
 });
 
-app.get('/addvisite',isMedecin,(req,res) => {
+app.get('/addvisite/:id',isMedecin,(req,res) => {
 	res.sendFile(path.join(__dirname,'../client/addvisite.html'));
 });
 
 app.post('/addvisite',isMedecin,(req,res,next) => {
-//TODO requete d'insertion de visite
 	const sql = `INSERT INTO Visite (dateVisite,compteRendu,idMedecin,idPatient) 
 		     VALUES (?,?,?,?)`
 	try{
@@ -120,17 +122,17 @@ app.post('/addvisite',isMedecin,(req,res,next) => {
 				throw new Error("Erreur lors de l'insertion de la visite");
 			}
 		});
-		res.redirect(`/patient?id=${req.body.idpatient}`);
+		res.redirect(`/patient/${req.body.idpatient}`);
 	}catch(err){
 		next(err);
 	}
 });
 
-app.get('/addreunion', isMedecin, (req,res) => {
+app.get('/addreunion/:id', isMedecin, (req,res) => {
 	res.sendFile(path.join(__dirname,'../client/addreunion.html'));
 });
 
-app.post('/addreunion',isMedecin, (req,res,err) => {
+app.post('/addreunion',isMedecin, (req,res) => {
 	const sqlReunion = `INSERT INTO Reunion (dateReunion, objetReunion)
 			    VALUES (?,?)`;
 
@@ -173,7 +175,7 @@ app.post('/addreunion',isMedecin, (req,res,err) => {
 	}catch(err){
 		next(err);
 	}
-	res.redirect(`/patient?id=${req.body.idpatient}`);
+	res.redirect(`/patient/${req.body.idpatient}`);
 });
 
 app.get('/admin',isAdmin,(req,res) => {
@@ -305,6 +307,39 @@ app.post('/sejour',(req,res,next) => {
 	}
 
 	res.redirect(`/chambre?id=${req.body.idchambre}`);
+});
+
+app.get('/modifsoin/:id',isMedecin,(req,res) => {
+	res.sendFile(path.join(__dirname, '../client/modifsoin.html'));
+});
+
+app.post('/modifsoin',isMedecin,(req, res) => {
+	console.log("modif soin",req.body);
+	const sqlSoin = `UPDATE Soin SET dateHeureSoin = ?,  descriptionSoin = ?, idInfirmier = ?
+			 WHERE idSoin = ?;`
+	
+	const sqlNec = `UPDATE Necessiter SET idMedicament = ?, quantite = ?
+			WHERE idSoin = ?;`
+	
+	const dateHeure = req.body.datesoin + " " + req.body.heuresoin;
+
+	db.run(sqlSoin,[dateHeure,req.body.description,req.body.infres,req.body.idsoin],(err) => {
+		if(err){
+			console.error("erreur modifsoin",err);
+		}
+	});
+
+	db.run(sqlNec,[req.body.medicament,req.body.quantite,req.body.idsoin],(err) => {
+		if(err){
+			console.error("erreur modif nec",err);
+		}
+	});
+
+	res.redirect('/medecin');
+});
+
+app.get('/personnel/:id', isLogged, (req, res) => {
+	res.sendFile(path.join(__dirname, '../client/personne.html'));
 });
 
 //Middleware pour erreur 404

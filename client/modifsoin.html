@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Ajout Reunion</title>
+	<link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<h1 id="title">Modifier un soin</h1><hr>
+	<h2 id="date"></h2>
+	<div id="formulaire">
+		<form action="/modifsoin" method="POST" id="form">
+			<input type="hidden" id="idsoin" name="idsoin">
+			
+			<label for="datesoin">Date du soin</label><br>
+			<input type="date" id="datesoin" name="datesoin"><br><br>
+
+			<label for="heuresoin">Heure du soin</label><br>
+			<input type="time" id="heuresoin" name="heuresoin"><br><br>
+
+			<label for="description">Description du soin</label><br>
+			<input type="text" id="description" name="description"><br><br>
+
+			<label for="infres">Infirmier responsable du soin</label><br>
+			<select id="infres" name="infres">
+			</select><br><br>
+
+			<label for="medicament">Medicament</label><br>
+			<select id="medicament" name="medicament">
+			</select><br><br>
+
+			<label for="quantite">Quantité</label><br>
+			<input type="text" id="quantite" name="quantite"><br><br>
+
+			<input type="submit" value="Confirmer">
+		</form>
+	</div>
+	<script src="/modifsoin.js"> </script>
+</body>
+</html>

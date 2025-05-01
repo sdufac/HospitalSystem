@@ -5,8 +5,9 @@ const mm = String(ajd.getMonth() + 1).padStart(2, '0');
 const dd = String(ajd.getDate()).padStart(2, '0');
 const date = `${yyyy}-${mm}-${dd}`;
 
-const params = new URLSearchParams(window.location.search);
-const id = params.get('id');
+const path = window.location.pathname;
+const segments = path.split('/');
+const id = segments[2];  
 
 const formdate = document.getElementById('formdate');
 const idmedecin = document.getElementById("idmedecin");
@@ -98,7 +99,7 @@ async function form(){
 
 async function fetchInfirmiers(){
 	try{
-		const response = await fetch('/api/getinfirmier');
+		const response = await fetch('/api/infirmiers');
 		if(!response.ok){
 			throw new Error('Erreur recuperation infirmiers');
 		}
@@ -113,7 +114,7 @@ async function fetchInfirmiers(){
 
 async function fetchMedicaments(){
 	try{
-		const response = await fetch('/api/getmedicaments');
+		const response = await fetch('/api/medicaments');
 		if(!response.ok){
 			throw new Error('Erreur recuperation medicaments');
 		}

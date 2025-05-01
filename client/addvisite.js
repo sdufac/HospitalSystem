@@ -2,8 +2,10 @@ const idmedecin = document.getElementById("idmedecin");
 const idpatient = document.getElementById("idpatient");
 const formdate = document.getElementById("formdate");
 const divdate = document.getElementById("date");
-const params = new URLSearchParams(window.location.search);
-const id = params.get('id');
+
+const url = new URL(window.location.href);
+const pathname = url.pathname;
+const id = pathname.split('/')[2];
 
 //Date du jour en on format pour la bdd
 const ajd = new Date();
@@ -30,7 +32,7 @@ async function form(){
 }
 async function fetchMedecin(){
 	try{
-		const response = await fetch('/api/getmedecin');
+		const response = await fetch('/api/medecin');
 		if(!response.ok){
 			throw new Error('Erreur recuperation medecin');
 		}

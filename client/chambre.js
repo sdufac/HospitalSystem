@@ -117,7 +117,7 @@ async function fetchRoomInfo(date){
 	const roomId = params.get("id");
 
 	try{
-		const response = await fetch(`/api/chambre?id=${roomId}&date=${date}`)
+		const response = await fetch(`/api/chambre/${roomId}/sejour/${date}`)
 		if(!response.ok) throw new Error("Erreur lors de la recuperation des info de la chambre");
 
 		const html = await response.text();
@@ -131,7 +131,7 @@ async function fetchRoomInfo(date){
 
 async function fetchPerNet(){
 	try{
-		const response = await fetch('/api/getpersnet');
+		const response = await fetch('/api/nettoyage');
 		if(!response.ok){
 			throw new Error ("Erreur recuperation personnelle de nettoyage");
 		}
@@ -146,7 +146,7 @@ async function fetchPerNet(){
 
 async function fetchPatients(){
 	try{
-		const response = await fetch('/api/getpatientadmin');
+		const response = await fetch('/api/patients');
 		if(!response.ok){
 			throw new Error ("Erreur recup patient");
 		}
@@ -164,7 +164,7 @@ async function fetchLits(){
 		const params = new URLSearchParams(window.location.search);
 		const roomId = params.get("id");
 		
-		const response = await fetch(`api/getlits?id=${roomId}`);
+		const response = await fetch(`api/chambre/${roomId}`);
 		if(!response.ok){
 			throw new Error ("Erreur recup lit");
 		}
