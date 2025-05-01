@@ -328,29 +328,6 @@ router.get('/chambre/:id/sejour/:date',isAdmin, (req,res) => {
 		if(err){
 			console.error(err);
 		}
-
-		// rows.forEach(row => {
-		// 	html += `<h2> Lit ${row.numLit}</h2>`;
-		// 	if(row.nomPers){
-		// 		html+= `${row.nomPers} ${row.prenomPers}<br>
-		// 			Date d'arrivée: ${row.dateAdmission}<br>
-		// 			Date de sortie prévue: ${row.dateSortiePrevue}<br>`;
-		//
-		// 		if(row.dateSortieReelle){
-		// 			html+= `Date de sortie reelle: ${row.dateSortieReelle}`
-		// 		}else{
-		// 			html+= `<form method="POST" action="/sejour">
-		// 					<input type="hidden" value="${row.idSejour}" id="id" name="id">
-		// 					<input type="hidden" value="${id}" id="idchambre" name="idchambre">
-		// 					<label for="date">Date de sortie: </label>
-		// 					<input type="date" name="date" id="date">
-		// 					<input type="submit" value="Confirmer">
-		// 				</form></br>`
-		// 		}
-		// 	}else{
-		// 		html+= `Aucun patient n'occupe actuellement le lit`;
-		// 	}
-		// });
 		
 		const chambre = {
 			lits: []

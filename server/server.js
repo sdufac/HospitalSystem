@@ -262,15 +262,15 @@ app.post('/addpatient',isAdmin,(req,res,next) => {
 	}
 });
 
-app.get('/addmedecin',isAdmin,(req,res) => {
-	res.sendFile(path.join(__dirname, '../client/addmedecin.html'));
+app.get('/addadmin',isAdmin,(req,res) => {
+	res.sendFile(path.join(__dirname, '../client/addadmin.html'));
 });
 
-app.post('/addmedecin',isAdmin,(req,res) => {
+app.post('/addadmin',isAdmin,(req,res) => {
 	const sqlPers = `INSERT INTO Personne (nomPers,prenomPers,dNaisPers,numTelPers,adressePers)
 			 VALUES(?,?,?,?,?);`
 	
-	const sqlPatient = `INSERT INTO Medecin VALUES(?,?,?,?);`
+	const sqlAdmin = `INSERT INTO PersonnelAdmin VALUES(?,?,?,?);`
 
 	try{
 		db.run(sqlPers,[req.body.nompers,req.body.prenompers,req.body.dnaispers,req.body.numtelpers,req.body.adressepers],
@@ -281,9 +281,41 @@ app.post('/addmedecin',isAdmin,(req,res) => {
 
 			const id = this.lastID;
 
-			db.run(sqlPatient,[id,req.body.specialite,req.body.mdp,req.body.service], (err) => {
+			db.run(sqlAdmin,[id,req.body.mdp,req.body.role,req.body.service], (err) => {
 				if(err){
-					throw new Error("erreur lors de l'insertion du patient");
+					throw new Error("erreur lors de l'insertion de l'admin");
+				}
+
+				return res.redirect('/admin');
+			});
+		});
+	}catch(err){
+		next(err);
+	}
+});
+
+app.get('/addpersnet',isAdmin,(req,res) => {
+	res.sendFile(path.join(__dirname, '../client/addpersnet.html'));
+});
+
+app.post('/addpersnet',isAdmin,(req,res) => {
+	const sqlPers = `INSERT INTO Personne (nomPers,prenomPers,dNaisPers,numTelPers,adressePers)
+			 VALUES(?,?,?,?,?);`
+	
+	const sqlAdmin = `INSERT INTO PersonnelNettoyage VALUES(?,?,?);`
+
+	try{
+		db.run(sqlPers,[req.body.nompers,req.body.prenompers,req.body.dnaispers,req.body.numtelpers,req.body.adressepers],
+		function (err) {
+			if(err){
+				throw new Error("erreur lors de l'insertion de la personne");
+			}
+
+			const id = this.lastID;
+
+			db.run(sqlAdmin,[id,req.body.role,req.body.datepriseposte], (err) => {
+				if(err){
+					throw new Error("erreur lors de l'insertion du personnel de nettoyage");
 				}
 
 				return res.redirect('/admin');

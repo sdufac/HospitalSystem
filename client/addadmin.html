@@ -3,14 +3,14 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Ajout Medecin</title>
+	<title>Ajout Admin</title>
 	<link rel="icon" href="/favicon.ico" type="image/x-icon">
 </head>
 <body>
-	<h1 id="title">Nouveau médecin</h1><hr>
+	<h1 id="title">Nouvel admin</h1><hr>
 	<h2 id="date"></h2>
 	<div id="formulaire">
-		<form action="/addmedecin" method="POST" id="form">
+		<form action="/addadmin" method="POST" id="form">
 			<label for="nompers">Nom</label><br>
 			<input type="text" id="nompers" name="nompers"><br><br>
 
@@ -26,8 +26,8 @@
 			<label for="adressepers">Adresse</label><br>
 			<input type="text" id="adressepers" name="adressepers"><br><br>
 
-			<label for="specialite">Specialité</label><br>
-			<input type="text" id="specialite" name="specialite"><br><br>
+			<label for="role">Rôle</label><br>
+			<input type="text" id="role" name="role"><br><br>
 
 			<label for="mdp">Mot de passe</label><br>
 			<input type="text" id="mdp" name="mdp"><br><br>
@@ -39,6 +39,6 @@
 			<input type="submit" value="Confirmer">
 		</form>
 	</div>
-	<script src="addmedecin.js"> </script>
+	<script src="/addadmin.js"> </script>
 </body>
 </html>

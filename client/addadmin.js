@@ -21,7 +21,7 @@ async function form(){
 
 async function fetchServices(){
 	try{
-		const response = await fetch('/api/getservice');
+		const response = await fetch('/api/service');
 		if(!response.ok){
 			throw new Error('Erreur recuperation medicaments');
 		}
