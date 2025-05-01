@@ -4,10 +4,45 @@ form();
 
 button.addEventListener("click",async function() {
 	try{
-		const html = await fetchRoomInfo(dateInput.value);
-		if(html){
+		const chambre = await fetchRoomInfo(dateInput.value);
+		if(chambre){
 			const div = document.getElementById("chambre");
-			div.innerHTML = html;
+			chambre.lits.forEach(l => {
+				const divLit = document.createElement("div");
+
+				const header = document.createElement("h2");
+				header.innerHTML =`Lit ${l.numLit}:`; 
+
+				divLit.appendChild(header);
+
+				if(l.sejour){
+					const p = document.createElement("p");
+					p.innerHTML = `${l.sejour.prenomPers} ${l.sejour.nomPers}<br>
+							 Date d'arrivée: ${l.sejour.dateAdmission}<br>`;
+					
+					
+					if(l.sejour.dateSortieReelle){
+						p.innerHTML += `Date de sortie réelle: ${l.sejour.dateSortieReelle}`;
+					}else{
+						const params = new URLSearchParams(window.location.search);
+						const id = params.get("id");
+
+						p.innerHTML += `<form method="POST" action="/sejour">
+							<input type="hidden" value="${l.sejour.idSejour}" id="id" name="id">
+							<input type="hidden" value="${id}" id="idchambre" name="idchambre">
+							<label for="date">Date de sortie: </label>
+							<input type="date" name="date" id="date">
+							<input type="submit" value="Confirmer">
+						</form></br>`;
+					}
+					divLit.appendChild(p);
+				}else{
+					const p = document.createElement("p");
+					p.innerText = "Aucun patient n'occupe le lit actuellement.";
+					divLit.appendChild(p);
+				}
+				div.appendChild(divLit);
+			})
 		}
 	}
 	catch(err){
@@ -120,9 +155,9 @@ async function fetchRoomInfo(date){
 		const response = await fetch(`/api/chambre/${roomId}/sejour/${date}`)
 		if(!response.ok) throw new Error("Erreur lors de la recuperation des info de la chambre");
 
-		const html = await response.text();
+		const chambre = await response.json();
 
-		return html;
+		return chambre;
 	}
 	catch(error){
 		console.error("Erreuuuur",error);

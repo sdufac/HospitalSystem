@@ -363,6 +363,7 @@ router.get('/chambre/:id/sejour/:date',isAdmin, (req,res) => {
 
 			if(row.idSejour){
 				lit.sejour =  {
+					idSejour: row.idSejour,
 					idPers: row.idPers,
 					prenomPers: row.prenomPers,
 					nomPers: row.nomPers,
