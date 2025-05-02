@@ -9,21 +9,22 @@
 	<title>Dashboard</title>
 </head>
 
-<body>
-	<div style="text-align: right;">
+<body class="bg-light">
+	<div class="container mt-5">
+		<div class="d-flex justify-content-end align-items-center mb-4 gap-2">
+			<input list="persondata" id="person" name="person" class="form-control w-auto"
+				placeholder="Chercher un personnel" />
+			<datalist id="persondata"></datalist>
+			<button id="select" class="btn btn-primary">Info</button>
+		</div>
 
-		<input list="persondata" id="person" name="person" />
-		<datalist id="persondata">
-		</datalist>
+		<h1 id="title" class="text-center mb-4">Dashboard Médecin</h1>
+		<hr>
 
-		<button id="select">Info</button>
+		<h2 id="patient" class="mb-3"></h2>
+		<div id="patients" class="list-group"></div>
 	</div>
 
-	<h1 id="title">Dashboard Medecin</h1>
-	<hr>
-
-	<h2 id="patient"></h2>
-	<div id="patients"></div>
 	<script src="medecin.js"> </script>
 </body>
 
