@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 	<title>Chambre</title>
 </head>
+
 <body>
 	<input type="date" id="date" name="date">
 	<input type="button" value="Rechercher" id="search">
 	<div id="chambre">
 		<br>Rentrer une date pour rechercher un séjour<br>
-	</div><hr>
+	</div>
+	<hr>
 	<h2> Signaler un ménage </h2>
 	<form action="/addmenage" method="POST">
 		<input type="hidden" id="idpmenage" name="idpmenage">
@@ -23,7 +28,8 @@
 		</datalist>
 
 		<input type="submit" value="Confirmer">
-	</form><hr>
+	</form>
+	<hr>
 	<h2> Ajouter un séjour </h2>
 	<form action="/addsejour" method="POST">
 		<input type="hidden" id="sidpatient" name="sidpatient">
@@ -47,4 +53,5 @@
 	</form>
 	<script src="/chambre.js"></script>
 </body>
+
 </html>

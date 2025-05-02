@@ -1,24 +1,30 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 	<title>Dashboard</title>
 </head>
+
 <body>
 	<div style="text-align: right;">
 
-	<input list="persondata" id="person" name="person"/>
-	<datalist id="persondata">
-	</datalist>
+		<input list="persondata" id="person" name="person" />
+		<datalist id="persondata">
+		</datalist>
 
-	<button id="select">Info</button>
+		<button id="select">Info</button>
 	</div>
 
-	<h1 id="title">Dashboard Medecin</h1><hr>
+	<h1 id="title">Dashboard Medecin</h1>
+	<hr>
 
 	<h2 id="patient"></h2>
 	<div id="patients"></div>
 	<script src="medecin.js"> </script>
 </body>
+
 </html>
