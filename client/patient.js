@@ -4,148 +4,161 @@ const id = pathname.split('/')[2];
 
 display();
 
-async function display(){
-	try{
+async function display() {
+	try {
 		const patient = await fetchInfo();
-		if(patient){
-			console.log("PATIENT",patient);
+		if (patient) {
+			console.log("PATIENT", patient);
 			const title = document.getElementById("name");
 			title.innerText = `${patient.prenomPers} ${patient.nomPers}`;
 
+			// VISITES
 			const visiteDiv = document.getElementById("visites");
-			if(patient.visites.length > 0){
+			if (patient.visites.length > 0) {
 				const table = document.createElement("table");
-				const th = document.createElement("tr");
+				table.className = "table table-hover table-striped";
 
-				const td1 = document.createElement("th");
-				td1.innerText ="Date";
+				const thead = document.createElement("thead");
+				const trHead = document.createElement("tr");
 
-				const td2 = document.createElement("th");
-				td2.innerText ="Compte Rendu";
+				const thDate = document.createElement("th");
+				thDate.innerText = "Date";
 
-				const td3 = document.createElement("th");
-				td3.innerText ="Medecin";
+				const thCompteRendu = document.createElement("th");
+				thCompteRendu.innerText = "Compte Rendu";
 
-				th.appendChild(td1);
-				th.appendChild(td2);
-				th.appendChild(td3);
+				const thMedecin = document.createElement("th");
+				thMedecin.innerText = "Médecin";
 
-				table.appendChild(th);
+				trHead.appendChild(thDate);
+				trHead.appendChild(thCompteRendu);
+				trHead.appendChild(thMedecin);
+				thead.appendChild(trHead);
+				table.appendChild(thead);
+
+				const tbody = document.createElement("tbody");
 
 				patient.visites.forEach(v => {
-					const footr = document.createElement("tr");
+					const trBody = document.createElement("tr");
 
-					const footddate = document.createElement("td");
-					footddate.innerText = v.dateVisite;
+					const tdDate = document.createElement("td");
+					tdDate.innerText = v.dateVisite;
 
-					const fooCompteRendu = document.createElement("td");
-					fooCompteRendu.innerText = v.compteRendu;
+					const tdCompteRendu = document.createElement("td");
+					tdCompteRendu.innerText = v.compteRendu;
 
-					const fooMedecin = document.createElement("td");
-					fooMedecin.innerText = `${v.medecin.prenomPers} ${v.medecin.nomPers}`;
+					const tdMedecin = document.createElement("td");
+					tdMedecin.innerText = `${v.medecin.prenomPers} ${v.medecin.nomPers}`;
 
-					footr.appendChild(footddate);
-					footr.appendChild(fooCompteRendu);
-					footr.appendChild(fooMedecin);
+					trBody.appendChild(tdDate);
+					trBody.appendChild(tdCompteRendu);
+					trBody.appendChild(tdMedecin);
 
-					table.appendChild(footr);
+					tbody.appendChild(trBody);
 				});
 
+				table.appendChild(tbody);
 				visiteDiv.appendChild(table);
-			}else{
+			} else {
 				visiteDiv.innerText = `Ce patient n'a pas encore de visite pour le moment`;
 			}
 
+			// SOINS
 			const soinsDiv = document.getElementById("soins");
-			if(patient.soins.length > 0){
+			if (patient.soins.length > 0) {
 				const table = document.createElement("table");
-				const th = document.createElement("tr");
+				table.className = "table table-hover table-striped";
 
-				const td1 = document.createElement("th");
-				td1.innerText ="Date et heure";
+				const thead = document.createElement("thead");
+				const trHead = document.createElement("tr");
 
-				const td2 = document.createElement("th");
-				td2.innerText ="Description";
+				const ths = [
+					"Date et heure",
+					"Description",
+					"Infirmier responsable",
+					"Date réunion",
+					"Objet réunion",
+					"Médecin réunion",
+					"Infirmier réunion",
+					"Actions"
+				];
 
-				const td3 = document.createElement("th");
-				td3.innerText ="Infirmier responsable";
-
-				const td4 = document.createElement("th");
-				td3.innerText ="Date réunion";
-
-				const td5 = document.createElement("th");
-				td3.innerText ="Objet réunion";
-
-				const td6 = document.createElement("th");
-				td3.innerText ="Medecin réunion";
-
-				const td7 = document.createElement("th");
-				td3.innerText ="Infirmier réunion";
-
-				th.appendChild(td1);
-				th.appendChild(td2);
-				th.appendChild(td3);
-				th.appendChild(td4);
-				th.appendChild(td5);
-				th.appendChild(td6);
-				th.appendChild(td7);
-
-				table.appendChild(th);
-
-				patient.soins.forEach(s => {
-					const footr = document.createElement("tr");
-
-					const footddateheure = document.createElement("td");
-					footddateheure.innerText = s.dateHeureSoin;
-
-					const fooDescription = document.createElement("td");
-					fooDescription.innerText = s.descriptionSoin;
-
-					const fooInfirmierRes = document.createElement("td");
-					fooInfirmierRes.innerText = `${s.infirmier.prenomPers} ${s.infirmier.nomPers}`;
-
-					const fooDateReunion = document.createElement("td");
-					fooDateReunion.innerText = s.reunion.dateReunion;
-
-					const fooObjetReunion = document.createElement("td");
-					fooObjetReunion.innerText = s.reunion.objetReunion;
-
-					const fooMedecinReunion = document.createElement("td");
-					fooMedecinReunion.innerText = `${s.reunion.medecin.prenomPers} ${s.reunion.medecin.nomPers}`;
-
-					const fooInfirmierReunion = document.createElement("td");
-					fooInfirmierReunion.innerText = `${s.reunion.infirmier.prenomPers} ${s.reunion.infirmier.nomPers}`;
-
-					const modifButton = document.createElement("button");
-					modifButton.innerText = "modifier";
-					modifButton.onclick = () =>{
-						window.location.href = `/modifsoin/${s.idSoin}`;
-					}
-
-					footr.appendChild(footddateheure);
-					footr.appendChild(fooDescription);
-					footr.appendChild(fooInfirmierRes);
-					footr.appendChild(fooDateReunion);
-					footr.appendChild(fooObjetReunion);
-					footr.appendChild(fooMedecinReunion);
-					footr.appendChild(fooInfirmierReunion);
-					footr.appendChild(modifButton);
-
-					table.appendChild(footr);
+				ths.forEach(text => {
+					const th = document.createElement("th");
+					th.innerText = text;
+					trHead.appendChild(th);
 				});
 
+				thead.appendChild(trHead);
+				table.appendChild(thead);
+
+				const tbody = document.createElement("tbody");
+
+				patient.soins.forEach(s => {
+					const trBody = document.createElement("tr");
+
+					const tdDateHeure = document.createElement("td");
+					tdDateHeure.innerText = s.dateHeureSoin;
+
+					const tdDescription = document.createElement("td");
+					tdDescription.innerText = s.descriptionSoin;
+
+					const tdInfirmierRes = document.createElement("td");
+					tdInfirmierRes.innerText = `${s.infirmier.prenomPers} ${s.infirmier.nomPers}`;
+
+					const tdDateReunion = document.createElement("td");
+					tdDateReunion.innerText = s.reunion.dateReunion;
+
+					const tdObjetReunion = document.createElement("td");
+					tdObjetReunion.innerText = s.reunion.objetReunion;
+
+					const tdMedecinReunion = document.createElement("td");
+					tdMedecinReunion.innerText = `${s.reunion.medecin.prenomPers} ${s.reunion.medecin.nomPers}`;
+
+					const tdInfirmierReunion = document.createElement("td");
+					tdInfirmierReunion.innerText = `${s.reunion.infirmier.prenomPers} ${s.reunion.infirmier.nomPers}`;
+
+					const modifButton = document.createElement("button");
+					modifButton.className = "btn btn-outline-primary btn-sm";
+					modifButton.innerText = "Modifier";
+					modifButton.onclick = () => {
+						window.location.href = `/modifsoin/${s.idSoin}`;
+					};
+
+					const tdButton = document.createElement("td");
+					tdButton.appendChild(modifButton);
+
+					trBody.appendChild(tdDateHeure);
+					trBody.appendChild(tdDescription);
+					trBody.appendChild(tdInfirmierRes);
+					trBody.appendChild(tdDateReunion);
+					trBody.appendChild(tdObjetReunion);
+					trBody.appendChild(tdMedecinReunion);
+					trBody.appendChild(tdInfirmierReunion);
+					trBody.appendChild(tdButton);
+
+					tbody.appendChild(trBody);
+				});
+
+				table.appendChild(tbody);
 				soinsDiv.appendChild(table);
-			}else{
+
+			} else {
 				soinsDiv.innerText = `Ce patient n'a pas encore reçu de soins pour le moment.`;
 			}
 
+			// ANTECEDENTS
 			const antDiv = document.getElementById("antecedents");
-			if(patient.antecedents.length > 0){
+
+			if (patient.antecedents.length > 0) {
 				const table = document.createElement("table");
-				const tr = document.createElement("tr");
+				table.className = "table table-hover table-striped";
+
+				const thead = document.createElement("thead");
+				const trHead = document.createElement("tr");
 
 				const th1 = document.createElement("th");
-				th1.innerText = `Type d'antecedent`;
+				th1.innerText = `Type d'antécédent`;
 
 				const th2 = document.createElement("th");
 				th2.innerText = `Description`;
@@ -153,57 +166,64 @@ async function display(){
 				const th3 = document.createElement("th");
 				th3.innerText = `Date de déclaration`;
 
-				tr.appendChild(th1);
-				tr.appendChild(th2);
-				tr.appendChild(th3);
-				table.appendChild(tr);
+				trHead.appendChild(th1);
+				trHead.appendChild(th2);
+				trHead.appendChild(th3);
+				thead.appendChild(trHead);
+				table.appendChild(thead);
+
+				const tbody = document.createElement("tbody");
 
 				patient.antecedents.forEach(a => {
-					const footr = document.createElement("tr");
+					const trBody = document.createElement("tr");
 
-					const footd1 = document.createElement("td");
-					footd1.innerText = a.typeAntecedent;
+					const tdType = document.createElement("td");
+					tdType.innerText = a.typeAntecedent;
 
-					const footd2 = document.createElement("td");
-					footd2.innerText = a.descriptionAntecedent;
+					const tdDesc = document.createElement("td");
+					tdDesc.innerText = a.descriptionAntecedent;
 
-					const footd3 = document.createElement("td");
-					footd3.innerText = a.dateDeclaration;
+					const tdDate = document.createElement("td");
+					tdDate.innerText = a.dateDeclaration;
 
-					footr.appendChild(footd1);
-					footr.appendChild(footd2);
-					footr.appendChild(footd3);
+					trBody.appendChild(tdType);
+					trBody.appendChild(tdDesc);
+					trBody.appendChild(tdDate);
 
-					table.appendChild(footr);
+					tbody.appendChild(trBody);
 				});
+
+				table.appendChild(tbody);
 				antDiv.appendChild(table);
-			}else{
-				antDiv.innerText = `Ce patient n'a aucun antecedent.`
+
+			} else {
+				antDiv.innerText = `Ce patient n'a aucun antécédent.`;
 			}
+
 			const reunionButton = document.getElementById("addreunion");
-			reunionButton.onclick = () =>  {
+			reunionButton.onclick = () => {
 				window.location.href = `/addreunion/${patient.idPers}`;
 			};
 
 			const visiteButton = document.getElementById("addvisite");
 			visiteButton.onclick = () => {
-				window.location.href=`/addvisite/${patient.idPers}`;
+				window.location.href = `/addvisite/${patient.idPers}`;
 			};
 		}
-	}catch(err){
-		console.error("Erreur display",err);
+	} catch (err) {
+		console.error("Erreur display", err);
 	}
 }
 
-async function fetchInfo(){
+async function fetchInfo() {
 
-	try{
+	try {
 		const response = await fetch('/api/patient/' + id);
-		if(!response.ok) throw new Erreur("Erreur lors de la recuperation des info patient coté client");
+		if (!response.ok) throw new Error("Erreur lors de la recuperation des info patient coté client");
 
 		const html = await response.json();
 		return html
-	}catch(error){
-		console.error("Erreuuuur",error);
+	} catch (error) {
+		console.error("Erreuuuur", error);
 	}
 }
