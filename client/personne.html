@@ -4,16 +4,24 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Informations Personnel - Hospital System</title>
+
 	<!-- Bootstrap CSS -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-	<title>Personnel</title>
 </head>
 
-<body>
-	<h1 id="title"></h1>
-	<h2 id="poste"></h2>
-	<hr>
-	<div id="info">
+<body class="bg-light">
+
+	<div class="container mt-5">
+		<div class="d-flex justify-content-between mb-4">
+			<h1 id="title">Informations du Personnel</h1>
+			<a href="/medecin.html" class="btn btn-secondary">Retour</a>
+		</div>
+
+		<div id="info" class="card p-4 shadow">
+			<!-- Informations du personnel injectées par personne.js -->
+		</div>
+
 	</div>
 	<script src="/personne.js"> </script>
 </body>
