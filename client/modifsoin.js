@@ -5,13 +5,13 @@ console.log("IDSOIN:", idSoin);
 
 form();
 
-async function form(){
-	try{
+async function form() {
+	try {
 		const infirmiers = await fetchInfirmiers();
 		const soin = await fetchSoin();
 		const medicaments = await fetchMedicaments();
 
-		if(infirmiers && soin && medicaments){
+		if (infirmiers && soin && medicaments) {
 			const inputIdSoin = document.getElementById("idsoin");
 			inputIdSoin.value = idSoin;
 
@@ -40,54 +40,57 @@ async function form(){
 
 			const quantite = document.getElementById("quantite");
 			quantite.value = soin.quantite;
+
+			const btnRetour = document.getElementById("btnRetour");
+			btnRetour.href = `/patient/${soin.idPatient}`;
 		}
-	}catch(err){
+	} catch (err) {
 		console.error(err);
 	}
 }
 
-async function fetchInfirmiers(){
-	try{
+async function fetchInfirmiers() {
+	try {
 		const response = await fetch('/api/infirmiers');
-		if(!response.ok){
+		if (!response.ok) {
 			throw new Error('Erreur recuperation infirmiers');
 		}
 
 		const infirmiers = await response.json();
 
 		return infirmiers
-	}catch(error){
+	} catch (error) {
 		console.error("Erreur infirmiers", error);
 	}
 }
 
-async function fetchMedicaments(){
-	try{
+async function fetchMedicaments() {
+	try {
 		const response = await fetch('/api/medicaments');
-		if(!response.ok){
+		if (!response.ok) {
 			throw new Error('Erreur recuperation medicaments');
 		}
 
 		const medicaments = await response.json();
 
 		return medicaments
-	}catch(error){
+	} catch (error) {
 		console.error("Erreur medicaments", error);
 	}
 }
 
-async function fetchSoin(){
-	try{
+async function fetchSoin() {
+	try {
 		console.log(idSoin);
 		const response = await fetch(`/api/soin/${idSoin}`);
-		if(!response.ok){
+		if (!response.ok) {
 			throw new Error('Erreur recuperation soin');
 		}
 
 		const soin = await response.json();
 
 		return soin;
-	}catch(error){
+	} catch (error) {
 		console.error("Erreur soin", error);
 	}
 }
