@@ -4,29 +4,13 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dashboard Admin - Hospital System</title>
+
 	<!-- Bootstrap CSS -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-	<title>Admin</title>
 	<link rel="icon" href="/favicon.ico" type="image/x-icon">
-</head>
 
-<body>
-	<script src="admin.js"></script>
 	<style>
-		table,
-		tr,
-		td {
-			border: 3px solid black;
-			border-collapse: collapse;
-			text-align: center;
-		}
-
-		td,
-		a {
-			width: 50px;
-			height: 50px;
-		}
-
 		.vert {
 			background-color: mediumseagreen;
 		}
@@ -35,16 +19,34 @@
 			background-color: salmon;
 		}
 	</style>
+</head>
 
-	<h1 id="title">Administrateur</h1>
-	<hr>
-	<h2> Gestion des chambres</h2>
-	<table id="rooms">
-	</table><br>
-	<hr>
-	<button onclick="window.location.href='/addpatient'">Ajouter un patient</button>
-	<button onclick="window.location.href='/addadmin'">Ajouter un admin</button>
-	<button onclick="window.location.href='/addpersnet'">Ajouter un personnel de nettoyage</button>
+<body class="bg-light">
+	<div class="container mt-4">
+
+		<h1 id="title" class="text-center mb-4">Dashboard Administrateur</h1>
+		<h2 id="welcome" class="mb-1 fs-3"></h2>
+		<p id="service" class="fs-6 text-muted mb-1"></p>
+		<hr class="mt-2 mb-4">
+
+		<h3 class="mb-3 fs-5">Gestion des chambres</h3>
+
+		<div class="table-responsive">
+			<table id="rooms" class="table table-bordered text-center">
+				<!-- Contenu injecté par admin.js -->
+			</table>
+		</div>
+
+		<hr class="my-4">
+
+		<div class="d-flex justify-content-end gap-3">
+			<a href="/addpatient" class="btn btn-success">Ajouter un patient</a>
+			<a href="/addadmin" class="btn btn-primary">Ajouter un admin</a>
+			<a href="/addpersnet" class="btn btn-warning">Ajouter un personnel de nettoyage</a>
+		</div>
+
+	</div>
+	<script src="admin.js"></script>
 </body>
 
 </html>
