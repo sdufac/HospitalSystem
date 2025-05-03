@@ -16,31 +16,33 @@ const date = `${yyyy}-${mm}-${dd}`;
 
 form();
 
-async function form(){
-	try{
+async function form() {
+	try {
 		const medecin = await fetchMedecin();
-		if(medecin){
+		if (medecin) {
 
 			divdate.innerHTML = `Visite du ${dd}/${mm}/${yyyy}`;
 			idmedecin.value = medecin.idPers;
 			idpatient.value = id;
 			formdate.value = date;
 		}
-	}catch(error){
+		const btnRetour = document.getElementById("btnRetour");
+		btnRetour.href = `/patient/${id}`;
+	} catch (error) {
 		console.error("Erreur client medecin", error);
 	}
 }
-async function fetchMedecin(){
-	try{
+async function fetchMedecin() {
+	try {
 		const response = await fetch('/api/medecin');
-		if(!response.ok){
+		if (!response.ok) {
 			throw new Error('Erreur recuperation medecin');
 		}
 
 		const medecin = await response.json();
 
 		return medecin
-	}catch(error){
+	} catch (error) {
 		console.error("Erreur medecin", error);
 	}
 }
