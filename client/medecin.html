@@ -6,23 +6,27 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<!-- Bootstrap CSS -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-	<title>Dashboard</title>
+	<title>Dashboard Médecin - Hospital System</title>
 </head>
 
 <body class="bg-light">
 	<div class="container mt-5">
-		<div class="d-flex justify-content-end align-items-center mb-4 gap-2">
-			<input list="persondata" id="person" name="person" class="form-control w-auto"
-				placeholder="Chercher un personnel" />
-			<datalist id="persondata"></datalist>
-			<button id="select" class="btn btn-primary">Info</button>
+
+		<h1 id="title" class="text-center mb-4">Dashboard Médecin</h1>
+
+		<div class="d-flex justify-content-between align-items-center mb-3 gap-2">
+			<h2 id="welcome" class=" fs-3"></h2>
+			<div class="d-flex justify-content-end align-items-center gap-2">
+				<input list="persondata" id="person" name="person" class="form-control w-auto"
+					placeholder="Chercher un personnel" />
+				<datalist id="persondata"></datalist>
+				<button id="select" class="btn btn-primary">Info</button>
+			</div>
 		</div>
 
-		<h1 id="title" class="text-center mb-4 fs-1">Dashboard Médecin</h1>
-		<h2 id="welcome" class="mb-4 fs-3"></h2>
 		<hr>
 
-		<h3 id="patient" class="mb-3 fs-5"></h3>
+		<h3 id="patient" class="mt-4 mb-3 fs-5"></h3>
 		<div id="patients" class="list-group"></div>
 	</div>
 
