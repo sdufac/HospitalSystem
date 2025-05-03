@@ -1,4 +1,5 @@
 const title = document.getElementById("title");
+const welcome = document.getElementById("welcome");
 const patient = document.getElementById("patient");
 const patientDiv = document.getElementById("patients");
 display();
@@ -8,7 +9,7 @@ async function display() {
 	try {
 		const medecin = await fetchMedecin();
 		if (medecin) {
-			title.innerHTML = "Bonjour " + medecin.prenomPers + " " + medecin.nomPers;
+			welcome.innerHTML = "Bonjour " + medecin.prenomPers + " " + medecin.nomPers + " !";
 			patient.innerHTML = "Patients actuellement au service " + medecin.service + " :";
 
 			const personnes = await fetchPersonne(medecin.idService);
