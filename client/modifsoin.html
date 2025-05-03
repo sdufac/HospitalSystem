@@ -23,6 +23,8 @@
 		<div id="formulaire">
 			<form action="/modifsoin" method="POST" id="form" class="bg-white p-4 rounded shadow-sm">
 				<input type="hidden" id="idsoin" name="idsoin">
+				<input type="hidden" id="idpatient" name="idpatient">
+
 
 				<div class="mb-3">
 					<label for="datesoin" class="form-label">Date du soin</label>
@@ -36,7 +38,7 @@
 
 				<div class="mb-3">
 					<label for="description" class="form-label">Description du soin</label>
-					<input type="text" id="description" name="description" class="form-control">
+					<textarea id="description" name="description" class="form-control" rows="4"></textarea>
 				</div>
 
 				<div class="mb-3">

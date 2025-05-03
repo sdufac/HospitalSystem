@@ -43,6 +43,10 @@ async function form() {
 
 			const btnRetour = document.getElementById("btnRetour");
 			btnRetour.href = `/patient/${soin.idPatient}`;
+
+			const inputIdPatient = document.getElementById("idpatient");
+			inputIdPatient.value = soin.idPatient;
+
 		}
 	} catch (err) {
 		console.error(err);
