@@ -47,6 +47,14 @@ async function form() {
 			const inputIdPatient = document.getElementById("idpatient");
 			inputIdPatient.value = soin.idPatient;
 
+			const datesoin = document.getElementById("datesoin");
+			const heuresoin = document.getElementById("heuresoin");
+			const datetime = soin.dateHeureSoin;
+			if (datetime) {
+				const [datePart, timePart] = datetime.split(' ');
+				datesoin.value = datePart;
+				heuresoin.value = timePart;
+			}
 		}
 	} catch (err) {
 		console.error(err);
