@@ -10,8 +10,8 @@ async function display() {
 
 		const div = document.getElementById("info");
 		if (personne) {
-			const title = document.getElementById("title");
-			title.innerText = `${personne.prenomPers} ${personne.nomPers}`;
+			const name = document.getElementById("name");
+			name.innerText = `${personne.prenomPers} ${personne.nomPers}`;
 
 			// Création d'une liste d'informations avec Bootstrap
 			div.innerHTML = `
