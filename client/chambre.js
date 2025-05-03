@@ -2,58 +2,75 @@ const dateInput = document.getElementById("date");
 const button = document.getElementById("search");
 form();
 
-button.addEventListener("click",async function() {
-	try{
+button.addEventListener("click", async function () {
+	try {
 		const chambre = await fetchRoomInfo(dateInput.value);
-		if(chambre){
+		if (chambre) {
 			const div = document.getElementById("chambre");
+			div.innerHTML = ""; // On efface le contenu précédent avant d'afficher le résultat de la recherche
 			chambre.lits.forEach(l => {
 				const divLit = document.createElement("div");
+				divLit.className = "card p-4 mb-3 shadow-sm";
 
-				const header = document.createElement("h2");
-				header.innerHTML =`Lit ${l.numLit}:`; 
+				const header = document.createElement("h5");
+				header.className = "card-title mb-2";
+				header.innerText = `Lit ${l.numLit}`;
 
 				divLit.appendChild(header);
 
-				if(l.sejour){
+				divLit.appendChild(header);
+
+				if (l.sejour) {
 					const p = document.createElement("p");
-					p.innerHTML = `${l.sejour.prenomPers} ${l.sejour.nomPers}<br>
-							 Date d'arrivée: ${l.sejour.dateAdmission}<br>`;
-					
-					
-					if(l.sejour.dateSortieReelle){
-						p.innerHTML += `Date de sortie réelle: ${l.sejour.dateSortieReelle}`;
-					}else{
+					p.className = "mb-2";
+					p.innerHTML = `${l.sejour.prenomPers} ${l.sejour.nomPers}<br>Date d'arrivée: ${l.sejour.dateAdmission}<br>`;
+					divLit.appendChild(p);
+
+					if (l.sejour.dateSortieReelle) {
+						const sortie = document.createElement("p");
+						sortie.className = "mb-2";
+						sortie.innerHTML = `Date de sortie réelle : ${l.sejour.dateSortieReelle}`;
+						divLit.appendChild(sortie);
+					} else {
 						const params = new URLSearchParams(window.location.search);
 						const id = params.get("id");
 
-						p.innerHTML += `<form method="POST" action="/sejour">
-							<input type="hidden" value="${l.sejour.idSejour}" id="id" name="id">
-							<input type="hidden" value="${id}" id="idchambre" name="idchambre">
-							<label for="date">Date de sortie: </label>
-							<input type="date" name="date" id="date">
-							<input type="submit" value="Confirmer">
-						</form></br>`;
+						const form = document.createElement("form");
+						form.method = "POST";
+						form.action = "/sejour";
+						form.className = "d-flex gap-2 align-items-center mt-3";
+
+						form.innerHTML = `
+							<input type="hidden" name="id" value="${l.sejour.idSejour}">
+							<input type="hidden" name="idchambre" value="${id}">
+							<label for="date" class="form-label mb-0">Date de sortie :</label>
+							<input type="date" name="date" class="form-control form-control-sm w-auto">
+							<input type="submit" value="Confirmer" class="btn btn-primary btn-sm">
+						`;
+
+						divLit.appendChild(form);
 					}
 					divLit.appendChild(p);
-				}else{
+				} else {
 					const p = document.createElement("p");
+					p.className = "text-muted";
 					p.innerText = "Aucun patient n'occupe le lit actuellement.";
 					divLit.appendChild(p);
 				}
+
 				div.appendChild(divLit);
 			})
 		}
 	}
-	catch(err){
-		console.error("Erreur info chambre",err);
+	catch (err) {
+		console.error("Erreur info chambre", err);
 	}
 });
 
-async function form(){
-	try{
+async function form() {
+	try {
 		const persnet = await fetchPerNet();
-		if(persnet){
+		if (persnet) {
 			const datalist = document.getElementById("mpers");
 			const persinput = document.getElementById("mpersinput");
 			const idPers = document.getElementById("idpmenage");
@@ -69,7 +86,7 @@ async function form(){
 			const mm = String(ajd.getMonth() + 1).padStart(2, '0');
 			const dd = String(ajd.getDate()).padStart(2, '0');
 			const datestring = `${yyyy}-${mm}-${dd}`;
-			date.value= datestring;
+			date.value = datestring;
 			console.log(date.value);
 
 			persnet.forEach(pers => {
@@ -82,24 +99,24 @@ async function form(){
 			persinput.addEventListener("input", () => {
 				let value = persinput.value;
 
-				const[prenom,nom] = value.split(" ");
+				const [prenom, nom] = value.split(" ");
 
 				const foo = persnet.find(p => {
-					return p.prenomPers === prenom && p.nomPers=== nom;
+					return p.prenomPers === prenom && p.nomPers === nom;
 				});
 
-				if(foo)idPers.value = foo.idPers;
+				if (foo) idPers.value = foo.idPers;
 			});
 
 
 		}
-	}catch(error){
+	} catch (error) {
 		console.error(error);
 	}
-	
-	try{
+
+	try {
 		const patients = await fetchPatients();
-		if(patients){
+		if (patients) {
 			const datalistPatient = document.getElementById("spatient");
 			const inputPatient = document.getElementById("spatientinput");
 			const hiddenidpatient = document.getElementById("sidpatient");
@@ -114,22 +131,22 @@ async function form(){
 			inputPatient.addEventListener("input", () => {
 				let value = inputPatient.value;
 
-				const[prenom,nom] = value.split(" ");
+				const [prenom, nom] = value.split(" ");
 
 				const foo = patients.find(p => {
-					return p.prenomPers === prenom && p.nomPers=== nom;
+					return p.prenomPers === prenom && p.nomPers === nom;
 				});
 
-				if(foo)hiddenidpatient.value = foo.idPers;
+				if (foo) hiddenidpatient.value = foo.idPers;
 			});
 		}
-	}catch(error){
+	} catch (error) {
 		console.error(error);
 	}
 
-	try{
+	try {
 		const lits = await fetchLits();
-		if(lits){
+		if (lits) {
 			const selectLit = document.getElementById("lit");
 			const idLit = document.getElementById("sidlit");
 
@@ -142,72 +159,72 @@ async function form(){
 			});
 
 		}
-	}catch(error){
+	} catch (error) {
 		console.error(error);
 	}
 }
 
-async function fetchRoomInfo(date){
+async function fetchRoomInfo(date) {
 	const params = new URLSearchParams(window.location.search);
 	const roomId = params.get("id");
 
-	try{
+	try {
 		const response = await fetch(`/api/chambre/${roomId}/sejour/${date}`)
-		if(!response.ok) throw new Error("Erreur lors de la recuperation des info de la chambre");
+		if (!response.ok) throw new Error("Erreur lors de la recuperation des info de la chambre");
 
 		const chambre = await response.json();
 
 		return chambre;
 	}
-	catch(error){
-		console.error("Erreuuuur",error);
+	catch (error) {
+		console.error("Erreuuuur", error);
 	}
 }
 
-async function fetchPerNet(){
-	try{
+async function fetchPerNet() {
+	try {
 		const response = await fetch('/api/nettoyage');
-		if(!response.ok){
-			throw new Error ("Erreur recuperation personnelle de nettoyage");
+		if (!response.ok) {
+			throw new Error("Erreur recuperation personnelle de nettoyage");
 		}
 
 		const persnet = await response.json();
 
 		return persnet;
-	}catch(error){
-		console.error("Erreur fetch persont",error);
+	} catch (error) {
+		console.error("Erreur fetch persont", error);
 	}
 }
 
-async function fetchPatients(){
-	try{
+async function fetchPatients() {
+	try {
 		const response = await fetch('/api/patients');
-		if(!response.ok){
-			throw new Error ("Erreur recup patient");
+		if (!response.ok) {
+			throw new Error("Erreur recup patient");
 		}
 
 		const patients = await response.json();
 
 		return patients;
-	}catch(error){
-		console.error("Erreur lors de la récuperation des patients",error);
+	} catch (error) {
+		console.error("Erreur lors de la récuperation des patients", error);
 	}
 }
 
-async function fetchLits(){
-	try{
+async function fetchLits() {
+	try {
 		const params = new URLSearchParams(window.location.search);
 		const roomId = params.get("id");
-		
+
 		const response = await fetch(`api/chambre/${roomId}`);
-		if(!response.ok){
-			throw new Error ("Erreur recup lit");
+		if (!response.ok) {
+			throw new Error("Erreur recup lit");
 		}
 
 		const lits = await response.json();
 
 		return lits;
-	}catch(error){
-		console.error("Erreur lors de la récuperation des lits",error);
+	} catch (error) {
+		console.error("Erreur lors de la récuperation des lits", error);
 	}
 }
