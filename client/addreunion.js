@@ -7,7 +7,7 @@ const date = `${yyyy}-${mm}-${dd}`;
 
 const path = window.location.pathname;
 const segments = path.split('/');
-const id = segments[2];  
+const id = segments[2];
 
 const formdate = document.getElementById('formdate');
 const idmedecin = document.getElementById("idmedecin");
@@ -17,24 +17,28 @@ const infres = document.getElementById("infres");
 
 const medicamentsdata = document.getElementById("medicament");
 
+const datesoin = document.getElementById('datesoin');
+const btnRetour = document.getElementById('btnRetour');
+const divdate = document.getElementById('date');
+
 form();
 
-async function form(){
-	try{
+async function form() {
+	try {
 		const infirmiers = await fetchInfirmiers();
 		const medicaments = await fetchMedicaments();
 
-		if(infirmiers && medicaments){
+		if (infirmiers && medicaments) {
 
 			idpatient.value = id;
 			formdate.value = date;
 
 			infirmiers.forEach(infirmier => {
 				const opt = document.createElement("option");
-				opt.value= `${infirmier.prenomPers} ${infirmier.nomPers}`;
+				opt.value = `${infirmier.prenomPers} ${infirmier.nomPers}`;
 
 				const opt2 = document.createElement("option");
-				opt2.value= `${infirmier.prenomPers} ${infirmier.nomPers}`;
+				opt2.value = `${infirmier.prenomPers} ${infirmier.nomPers}`;
 
 				infpresent.appendChild(opt);
 				infres.appendChild(opt2);
@@ -58,25 +62,25 @@ async function form(){
 			input1.addEventListener("input", () => {
 				let value = input1.value;
 
-				const[prenom,nom] = value.split(" ");
+				const [prenom, nom] = value.split(" ");
 
 				const foo = infirmiers.find(inf => {
-					return inf.prenomPers === prenom && inf.nomPers=== nom;
+					return inf.prenomPers === prenom && inf.nomPers === nom;
 				});
 
-				if(foo)idtag1.value = foo.idPers;
+				if (foo) idtag1.value = foo.idPers;
 			});
 
 			input2.addEventListener("input", () => {
 				let value = input2.value;
 
-				const[prenom,nom] = value.split(" ");
+				const [prenom, nom] = value.split(" ");
 
 				const foo = infirmiers.find(inf => {
-					return inf.prenomPers === prenom && inf.nomPers=== nom;
+					return inf.prenomPers === prenom && inf.nomPers === nom;
 				});
 
-				if(foo)idtag2.value = foo.idPers;
+				if (foo) idtag2.value = foo.idPers;
 			});
 
 			medicamentinput.addEventListener("input", () => {
@@ -85,44 +89,57 @@ async function form(){
 					return med.nomMedicament === value;
 				})
 
-				if(foo){
+				if (foo) {
 					idmedicament.value = foo.idMedicament;
 					console.log("Id du medicament selectionné: " + idmedicament.value);
 				}
 			})
 
 		}
-	}catch(error){
+
+		idpatient.value = id;
+		formdate.value = date;
+		datesoin.value = date;
+
+		const heuresoin = document.getElementById('heuresoin');
+		const currentHours = String(ajd.getHours()).padStart(2, '0');
+		const currentMinutes = String(ajd.getMinutes()).padStart(2, '0');
+		heuresoin.value = `${currentHours}:${currentMinutes}`;
+
+		divdate.innerHTML = `Réunion du ${dd}/${mm}/${yyyy}`;
+		btnRetour.href = `/patient/${id}`;
+
+	} catch (error) {
 		console.error("Erreur client medecin", error);
 	}
 }
 
-async function fetchInfirmiers(){
-	try{
+async function fetchInfirmiers() {
+	try {
 		const response = await fetch('/api/infirmiers');
-		if(!response.ok){
+		if (!response.ok) {
 			throw new Error('Erreur recuperation infirmiers');
 		}
 
 		const infirmiers = await response.json();
 
 		return infirmiers
-	}catch(error){
+	} catch (error) {
 		console.error("Erreur infirmiers", error);
 	}
 }
 
-async function fetchMedicaments(){
-	try{
+async function fetchMedicaments() {
+	try {
 		const response = await fetch('/api/medicaments');
-		if(!response.ok){
+		if (!response.ok) {
 			throw new Error('Erreur recuperation medicaments');
 		}
 
 		const medicaments = await response.json();
 
 		return medicaments
-	}catch(error){
+	} catch (error) {
 		console.error("Erreur medicaments", error);
 	}
 }
