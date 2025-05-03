@@ -4,42 +4,64 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Modifier un Soin - Hospital System</title>
+
 	<!-- Bootstrap CSS -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-	<title>Ajout Reunion</title>
 	<link rel="icon" href="/favicon.ico" type="image/x-icon">
 </head>
 
-<body>
-	<h1 id="title">Modifier un soin</h1>
-	<hr>
-	<h2 id="date"></h2>
-	<div id="formulaire">
-		<form action="/modifsoin" method="POST" id="form">
-			<input type="hidden" id="idsoin" name="idsoin">
+<body class="bg-light">
+	<div class="container mt-5">
+		<div class="d-flex justify-content-between align-items-center mb-4">
+			<a href="/medecin.html" class="btn btn-secondary">Retour</a>
+			<h1 id="title" class="text-center flex-grow-1">Modifier un soin</h1>
+		</div>
 
-			<label for="datesoin">Date du soin</label><br>
-			<input type="date" id="datesoin" name="datesoin"><br><br>
+		<hr>
 
-			<label for="heuresoin">Heure du soin</label><br>
-			<input type="time" id="heuresoin" name="heuresoin"><br><br>
+		<div id="formulaire">
+			<form action="/modifsoin" method="POST" id="form" class="bg-white p-4 rounded shadow-sm">
+				<input type="hidden" id="idsoin" name="idsoin">
 
-			<label for="description">Description du soin</label><br>
-			<input type="text" id="description" name="description"><br><br>
+				<div class="mb-3">
+					<label for="datesoin" class="form-label">Date du soin</label>
+					<input type="date" id="datesoin" name="datesoin" class="form-control">
+				</div>
 
-			<label for="infres">Infirmier responsable du soin</label><br>
-			<select id="infres" name="infres">
-			</select><br><br>
+				<div class="mb-3">
+					<label for="heuresoin" class="form-label">Heure du soin</label>
+					<input type="time" id="heuresoin" name="heuresoin" class="form-control">
+				</div>
 
-			<label for="medicament">Medicament</label><br>
-			<select id="medicament" name="medicament">
-			</select><br><br>
+				<div class="mb-3">
+					<label for="description" class="form-label">Description du soin</label>
+					<input type="text" id="description" name="description" class="form-control">
+				</div>
 
-			<label for="quantite">Quantité</label><br>
-			<input type="text" id="quantite" name="quantite"><br><br>
+				<div class="mb-3">
+					<label for="infres" class="form-label">Infirmier responsable du soin</label>
+					<select id="infres" name="infres" class="form-select">
+					</select>
+				</div>
 
-			<input type="submit" value="Confirmer">
-		</form>
+				<div class="mb-3">
+					<label for="medicament" class="form-label">Médicament</label>
+					<select id="medicament" name="medicament" class="form-select">
+					</select>
+				</div>
+
+				<div class="mb-3">
+					<label for="quantite" class="form-label">Quantité</label>
+					<input type="text" id="quantite" name="quantite" class="form-control">
+				</div>
+
+				<div class="d-flex justify-content-center">
+					<input type="submit" value="Confirmer" class="btn btn-primary">
+				</div>
+			</form>
+		</div>
+
 	</div>
 	<script src="/modifsoin.js"> </script>
 </body>
