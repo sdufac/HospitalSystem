@@ -4,43 +4,75 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Ajouter un patient - Hospital System</title>
+
 	<!-- Bootstrap CSS -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-	<title>Ajout Patient</title>
 	<link rel="icon" href="/favicon.ico" type="image/x-icon">
 </head>
 
-<body>
-	<h1 id="title">Nouveau patient</h1>
-	<hr>
-	<h2 id="date"></h2>
-	<div id="formulaire">
-		<form action="/addpatient" method="POST" id="form">
-			<label for="nompers">Nom</label><br>
-			<input type="text" id="nompers" name="nompers"><br><br>
+<body class="bg-light">
 
-			<label for="prenompers">Prenom</label><br>
-			<input type="text" id="prenompers" name="prenompers"><br><br>
+	<div class="container mt-5">
 
-			<label for="dnaispers">Date de naissance</label><br>
-			<input type="date" id="dnaispers" name="dnaispers"><br><br>
+		<div class="d-flex align-items-center justify-content-between mb-4">
+			<a href="/admin.html" class="btn btn-secondary">Retour</a>
+			<h1 id="title" class="flex-grow-1 text-center m-0">Nouveau Patient</h1>
+			<!-- Pour équilibrer à droite, on ajoute un bouton invisible à droite -->
+			<div class="btn invisible">Retour</div>
 
-			<label for="numtelpers">Numéro de telephone</label><br>
-			<input type="text" id="numtelpers" name="numtelpers"><br><br>
+		</div>
 
-			<label for="adressepers">Adresse</label><br>
-			<input type="text" id="adressepers" name="adressepers"><br><br>
+		<hr class="mt-2 mb-4">
 
-			<label for="numdossiermed">Numero du dossier médical</label><br>
-			<input type="text" id="numdossiermed" name="numdossiermed"><br><br>
+		<div class="card p-4 shadow-sm">
+			<form action="/addpatient" method="POST" id="form">
 
-			<label for="motifhospitalisation">Motif de l'hospitalisation</label><br>
-			<input type="text" id="motifhospitalisation" name="motifhospitalisation"><br><br>
+				<div class="mb-3">
+					<label for="nompers" class="form-label">Nom</label>
+					<input type="text" id="nompers" name="nompers" class="form-control">
+				</div>
 
-			<input type="submit" value="Confirmer">
-		</form>
+				<div class="mb-3">
+					<label for="prenompers" class="form-label">Prénom</label>
+					<input type="text" id="prenompers" name="prenompers" class="form-control">
+				</div>
+
+				<div class="mb-3">
+					<label for="dnaispers" class="form-label">Date de naissance</label>
+					<input type="date" id="dnaispers" name="dnaispers" class="form-control">
+				</div>
+
+				<div class="mb-3">
+					<label for="numtelpers" class="form-label">Numéro de téléphone</label>
+					<input type="text" id="numtelpers" name="numtelpers" class="form-control">
+				</div>
+
+				<div class="mb-3">
+					<label for="adressepers" class="form-label">Adresse</label>
+					<input type="text" id="adressepers" name="adressepers" class="form-control">
+				</div>
+
+				<div class="mb-3">
+					<label for="numdossiermed" class="form-label">Numéro du dossier médical</label>
+					<input type="text" id="numdossiermed" name="numdossiermed" class="form-control">
+				</div>
+
+				<div class="mb-3">
+					<label for="motifhospitalisation" class="form-label">Motif de l'hospitalisation</label>
+					<input type="text" id="motifhospitalisation" name="motifhospitalisation" class="form-control">
+				</div>
+
+				<div class="text-center">
+					<input type="submit" value="Confirmer" class="btn btn-primary">
+				</div>
+
+			</form>
+		</div>
 	</div>
-	<!-- <script src="addpatient.js"> </script> -->
+
+	<!-- <script src="addpatient.js"></script> -->
+
 </body>
 
 </html>
