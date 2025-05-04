@@ -100,6 +100,15 @@ app.post('/login', (req, res, next) => {
 	}
 });
 
+app.post('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      return res.status(500).send("Erreur lors de la déconnexion");
+    }
+    res.redirect('/login');
+  });
+});
+
 app.get('/medecin', isMedecin, (req, res) => {
 	res.sendFile(path.join(__dirname, '../client/medecin.html'));
 });
