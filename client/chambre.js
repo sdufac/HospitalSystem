@@ -2,6 +2,20 @@ const dateInput = document.getElementById("date");
 const button = document.getElementById("search");
 form();
 
+const formMenage = document.getElementById("formMenage");
+formMenage.addEventListener('submit',function(e) {
+	if(!formulaireComplet(formMenage)){
+		e.preventDefault();
+	}
+});
+
+const formSejour = document.getElementById("formSejour");
+formSejour.addEventListener('submit',function(e) {
+	if(!formulaireComplet(formSejour)){
+		e.preventDefault();
+	}
+});
+
 button.addEventListener("click", async function () {
 	try {
 		const chambre = await fetchRoomInfo(dateInput.value);
@@ -227,4 +241,14 @@ async function fetchLits() {
 	} catch (error) {
 		console.error("Erreur lors de la récuperation des lits", error);
 	}
+}
+
+function formulaireComplet(form) {
+	const elements = form.querySelectorAll('input, textarea, select');
+	for (let el of elements) {
+		if(el.type !== 'submit' && el.type !== 'button' && !el.disabled && !el.value.trim()) {
+			return false;
+		}
+	}
+	return true;
 }

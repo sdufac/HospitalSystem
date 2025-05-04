@@ -16,6 +16,16 @@ const date = `${yyyy}-${mm}-${dd}`;
 
 form();
 
+const formulaire = document.getElementById("visiteform");
+if(formulaire){
+	console.log("FORM");
+}
+formulaire.addEventListener('submit',function(e) {
+	if(!formulaireComplet(formulaire)){
+		e.preventDefault();
+	}
+});
+
 async function form() {
 	try {
 		const medecin = await fetchMedecin();
@@ -45,4 +55,14 @@ async function fetchMedecin() {
 	} catch (error) {
 		console.error("Erreur medecin", error);
 	}
+}
+
+function formulaireComplet(form) {
+	const elements = form.querySelectorAll('input, textarea, select');
+	for (let el of elements) {
+		if(el.type !== 'submit' && el.type !== 'button' && !el.disabled && el.offsetParent !== null && !el.value.trim()) {
+			return false;
+		}
+	}
+	return true;
 }
