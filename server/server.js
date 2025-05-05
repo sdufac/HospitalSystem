@@ -113,7 +113,7 @@ app.get('/medecin', isMedecin, (req, res) => {
 	res.sendFile(path.join(__dirname, '../client/medecin.html'));
 });
 
-app.get('/patient/:id', isMedecin, (req, res) => {
+app.get('/patient/:id', isLogged, (req, res) => {
 	res.sendFile(path.join(__dirname, '../client/patient.html'));
 });
 
@@ -191,7 +191,7 @@ app.get('/admin', isAdmin, (req, res) => {
 	res.sendFile(path.join(__dirname, '../client/admin.html'));
 });
 
-app.get('/chambre', isAdmin, (req, res) => {
+app.get('/chambre/:id', isAdmin, (req, res) => {
 	res.sendFile(path.join(__dirname, '../client/chambre.html'));
 });
 

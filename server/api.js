@@ -89,7 +89,7 @@ router.get('/patients/service', isLogged, (req,res) =>{
 });
 
 //Retourne toutes les infos d'un patient specifique
-router.get('/patient/:id',isMedecin ,(req,res, next) =>{
+router.get('/patient/:id',isLogged ,(req,res, next) =>{
 	const id = req.params.id;
 
 	const sql = `SELECT p.idPers, p.nomPers, p.prenomPers, p.dNaisPers, p.numTelPers, p.adressePers,
@@ -273,7 +273,7 @@ router.get('/chambres',isAdmin,(req,res) => {
 
 		     LEFT JOIN Sejour s ON s.idLit = l.idLit
     		     AND DATE('now') >= s.dateAdmission
-		     AND DATE('now') <= COALESCE(s.dateSortieReelle, s.dateSortiePrevue)
+		     AND (DATE('now') <= COALESCE(s.dateSortieReelle, s.dateSortiePrevue) OR s.dateSortieReelle IS NULL)
 
 		     LEFT JOIN Nettoyage n ON n.idChambre = c.idChambre
 
@@ -305,6 +305,52 @@ router.get('/chambres',isAdmin,(req,res) => {
 	});
 });
 
+router.get('/sejour/encours',isAdmin,(req,res) => {
+
+	const date = new Date().toISOString().split('T')[0];
+
+	const sql = `SELECT s.dateAdmission, s.dateSortiePrevue, s.dateSortieReelle,
+		     p.idPers, p.nomPers, p.prenomPers,
+		     l.numLit,
+		     c.idChambre, c.numChambre
+		     FROM Sejour s
+		     JOIN Personne p ON s.idPatient = p.idPers
+		     JOIN Lit l ON s.idLit = l.idLit
+		     JOIN Chambre c ON c.idChambre = l.idChambre
+		     WHERE c.idService = ?
+		     AND s.dateAdmission < ?
+		     AND (s.dateSortieReelle IS NULL OR s.dateSortieReelle > ?);`;
+
+	db.all(sql,[req.session.admin.idService,date,date],(err,rows) => {
+		if(err){
+			console.error(err);
+		}
+		if(rows){
+			const sejours = [];
+			rows.forEach(s => {
+				sejours.push({
+					dateAdmission: s.dateAdmission,
+					dateSortiePrevue: s.dateSortiePrevue,
+					dateSortieReelle: s.dateSortieReelle,
+					idPers: s.idPers,
+					nomPers: s.nomPers,
+					prenomPers: s.prenomPers,
+					numLit: s.numLit,
+					idChambre: s.idChambre,
+					numChambre: s.numChambre
+				});
+			});
+
+			console.log("c carré",sejours);
+			return res.json(sejours);
+		}
+	});
+});
+
+router.get('/sejour/terminee',isAdmin,(req,res) => {
+
+});
+
 //Retourne l'admin en session
 router.get('/getadmin',isAdmin, (req,res) => {
 	res.json(req.session.admin);
@@ -319,12 +365,11 @@ router.get('/chambre/:id/sejour/:date',isAdmin, (req,res) => {
 		     JOIN Lit l ON c.idChambre = l.idChambre
 		     LEFT JOIN Sejour s ON l.idLit = s.idLit 
 			AND s.dateAdmission <= ?
-			AND (s.dateSortieReelle IS NULL AND s.dateSortiePrevue >= ?
-			OR s.dateSortieReelle IS NOT NULL AND s.dateSortieReelle >= ?)
+			AND (s.dateSortieReelle IS NULL OR s.dateSortieReelle >= ?)
 		     LEFT JOIN Personne p ON s.idPatient= p.idPers
 		     WHERE c.idChambre = ?;`;
 
-	db.all(sql,[date,date,date,id],(err,rows) => {
+	db.all(sql,[date,date,id],(err,rows) => {
 		if(err){
 			console.error(err);
 		}

@@ -1,5 +1,10 @@
 const dateInput = document.getElementById("date");
 const button = document.getElementById("search");
+
+const dateParam = new URLSearchParams(window.location.search).get('date');
+if (dateParam){
+	dateInput.value = dateParam;
+}
 form();
 
 const formMenage = document.getElementById("formMenage");
@@ -46,8 +51,9 @@ button.addEventListener("click", async function () {
 						sortie.innerHTML = `Date de sortie réelle : ${l.sejour.dateSortieReelle}`;
 						divLit.appendChild(sortie);
 					} else {
-						const params = new URLSearchParams(window.location.search);
-						const id = params.get("id");
+						const path = window.location.pathname;
+						const segments = path.split('/');
+						const id = segments[2];
 
 						const form = document.createElement("form");
 						form.method = "POST";
@@ -64,6 +70,14 @@ button.addEventListener("click", async function () {
 
 						divLit.appendChild(form);
 					}
+
+					const patientButton = document.createElement("button");
+					patientButton.innerText = "Patient";
+					patientButton.onclick = () => {
+						window.location.href = `/patient/${l.sejour.idPers}`;
+					}
+					p.appendChild(patientButton);
+
 					divLit.appendChild(p);
 				} else {
 					const p = document.createElement("p");
@@ -81,6 +95,8 @@ button.addEventListener("click", async function () {
 	}
 });
 
+button.click();
+
 async function form() {
 	try {
 		const persnet = await fetchPerNet();
@@ -91,8 +107,9 @@ async function form() {
 			const idChambre = document.getElementById("idchambre");
 			const date = document.getElementById("datem");
 
-			const params = new URLSearchParams(window.location.search);
-			const id = params.get("id");
+			const path = window.location.pathname;
+			const segments = path.split('/');
+			const id = segments[2];
 			idChambre.value = id;
 
 			const ajd = new Date();
@@ -162,7 +179,6 @@ async function form() {
 		const lits = await fetchLits();
 		if (lits) {
 			const selectLit = document.getElementById("lit");
-			const idLit = document.getElementById("sidlit");
 
 			lits.forEach(l => {
 				const opt = document.createElement("option");
@@ -179,8 +195,9 @@ async function form() {
 }
 
 async function fetchRoomInfo(date) {
-	const params = new URLSearchParams(window.location.search);
-	const roomId = params.get("id");
+	const path = window.location.pathname;
+	const segments = path.split('/');
+	const roomId = segments[2];
 
 	try {
 		const response = await fetch(`/api/chambre/${roomId}/sejour/${date}`)
@@ -227,10 +244,11 @@ async function fetchPatients() {
 
 async function fetchLits() {
 	try {
-		const params = new URLSearchParams(window.location.search);
-		const roomId = params.get("id");
+		const path = window.location.pathname;
+		const segments = path.split('/');
+		const id = segments[2];
 
-		const response = await fetch(`api/chambre/${roomId}`);
+		const response = await fetch(`/api/chambre/${id}`);
 		if (!response.ok) {
 			throw new Error("Erreur recup lit");
 		}
