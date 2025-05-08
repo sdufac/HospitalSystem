@@ -102,10 +102,10 @@ app.post('/login', (req, res, next) => {
 
 app.post('/logout', (req, res) => {
 	req.session.destroy(err => {
-	if (err) {
-		return res.status(500).send("Erreur lors de la déconnexion");
-	}
-	res.redirect('/login');
+		if (err) {
+			return res.status(500).send("Erreur lors de la déconnexion");
+		}
+		res.redirect('/login');
 	});
 });
 
@@ -355,7 +355,7 @@ app.post('/sejour', (req, res, next) => {
 		next(err);
 	}
 
-	res.redirect(`/chambre?id=${req.body.idchambre}`);
+	res.redirect(`/chambre/${req.body.idchambre}?date=${req.body.date}`);
 });
 
 app.get('/modifsoin/:id', isMedecin, (req, res) => {
