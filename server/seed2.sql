@@ -10,14 +10,15 @@ INSERT INTO Personne (idPers, nomPers, prenomPers, dNaisPers, numTelPers, adress
 (8, 'Charpentier', 'Lucie', '1983-07-23', '0655443322', '5 avenue Bleuets, Nice'), -- Patient
 (9, 'Girard', 'Nicolas', '1991-10-08', '0644332211', '33 rue Soleil, Bordeaux'), -- Patient
 (10, 'b', 'Camille', '1970-03-03', '0633221100', '50 rue Montagne, Strasbourg'), -- Admin
-(11, 'Prfqe', 'Henri', '1965-08-17', '0622110099', '72 avenue du Port, Marseille'), -- Nettoyage
+(11, 'Peron', 'Henri', '1965-08-17', '0622110099', '72 avenue du Port, Marseille'), -- Nettoyage
 (12, 'Leroy', 'Emma', '1992-01-01', '0612345678', '1 rue des Lilas, Dijon'), -- Patient
 (13, 'Renard', 'Julien', '1989-06-15', '0623456789', '8 avenue Lumière, Lille'), -- Patient
 (14, 'Benoit', 'Sophie', '1978-09-05', '0634567890', '22 rue des Champs, Reims'), -- Patient
 (15, 'Lopez', 'Antoine', '1994-03-21', '0645678901', '77 avenue des Prés, Tours'), -- Patient
 (16, 'Meunier', 'Alice', '1986-12-30', '0656789012', '99 boulevard Verdun, Nancy'), -- Patient
 (17, 'c', 'Cam', '1970-03-03', '0633221100', '50 rue Montagne, Strasbourg'), -- Admin
-(18, 'd', 'Jules', '1970-03-03', '0633221100', '50 rue Montagne, Strasbourg'); -- Admin
+(18, 'd', 'Jules', '1970-03-03', '0633221100', '50 rue Montagne, Strasbourg'), -- Admin
+(19, 'Burdaux', 'Laure', '1965-08-17', '0622110099', '72 avenue du Port, Marseille'); -- Nettoyage
 -- SERVICES
 INSERT INTO Service (idService, nomService, etageService, idMedecinRef, idAdminRes) VALUES
 (1, 'Cardiologie', 1, 1, 10),
@@ -44,7 +45,8 @@ INSERT INTO PersonnelAdmin (idPers, mdp, role, datePrisePoste) VALUES
 
 -- NETTOYAGE
 INSERT INTO PersonnelNettoyage (idPers, role, datePrisePoste) VALUES
-(11, 'AgentEntretien', '2015-01-01');
+(11, 'Agent Entretien', '2015-01-01'),
+(19, 'Agent Entretien', '2015-01-01');
 
 -- PATIENTS
 INSERT INTO Patient (idPers, numDossierMed, motifHospitalisation) VALUES

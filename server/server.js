@@ -249,6 +249,13 @@ app.post('/addpatient', isAdmin, (req, res, next) => {
 
 	const sqlPatient = `INSERT INTO Patient VALUES(?,?,?);`
 
+	const sqlAntecedents = `INSERT INTO Antecedent(typeAntecedent,description,dateDeclaration, idPatient)
+				VALUES (?,?,?,?);`
+
+	const typeAntecedents = req.body.typeantecedent;
+	const descriptionAntecedant = req.body.descriptionantecedent;
+	const dateAntecedent = req.body.dateantecedent;
+
 	try {
 		db.run(sqlPers, [req.body.nompers, req.body.prenompers, req.body.dnaispers, req.body.numtelpers, req.body.adressepers],
 			function (err) {
@@ -263,8 +270,22 @@ app.post('/addpatient', isAdmin, (req, res, next) => {
 						throw new Error("erreur lors de l'insertion du patient");
 					}
 
-					return res.redirect('/admin');
 				});
+
+				for(let i = 0; i<typeAntecedents.length; i++){
+					const type = typeAntecedents[i];
+					const description = descriptionAntecedant[i];
+					const date = dateAntecedent[i];
+
+					console.log(`ANTECEDENT: ${type}, ${description}, ${date}`);
+					db.run(sqlAntecedents, [type,description,date,id], (err) => {
+						if(err){
+							console.error("Erreur insertion antecedant");
+						}
+					});
+				}
+				
+				return res.redirect('/admin');
 			});
 	} catch (err) {
 		next(err);
