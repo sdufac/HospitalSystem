@@ -305,45 +305,33 @@ router.get('/chambres', isAdmin, (req, res) => {
 	});
 });
 
+// Retourne les séjours encours
 router.get('/sejour/encours', isAdmin, (req, res) => {
+	const sql = `
+        SELECT 
+            s.dateAdmission, 
+            s.dateSortiePrevue, 
+            c.numChambre, 
+            l.numLit, 
+            per.nomPers, 
+            per.prenomPers,
+            c.idChambre
+        FROM Sejour s
+        JOIN Lit l ON s.idLit = l.idLit
+        JOIN Chambre c ON l.idChambre = c.idChambre
+        JOIN Patient pa ON s.idPatient = pa.idPers
+        JOIN Personne per ON pa.idPers = per.idPers
+        WHERE (s.dateSortieReelle IS NULL)
+        AND s.dateAdmission <= DATE('now')
+        AND (s.dateSortiePrevue >= DATE('now') OR s.dateSortiePrevue IS NULL);
+    `;
 
-	const date = new Date().toISOString().split('T')[0];
-
-	const sql = `SELECT s.dateAdmission, s.dateSortiePrevue, s.dateSortieReelle,
-		     p.idPers, p.nomPers, p.prenomPers,
-		     l.numLit,
-		     c.idChambre, c.numChambre
-		     FROM Sejour s
-		     JOIN Personne p ON s.idPatient = p.idPers
-		     JOIN Lit l ON s.idLit = l.idLit
-		     JOIN Chambre c ON c.idChambre = l.idChambre
-		     WHERE c.idService = ?
-		     AND s.dateAdmission < ?
-		     AND (s.dateSortieReelle IS NULL OR s.dateSortieReelle > ?);`;
-
-	db.all(sql, [req.session.admin.idService, date, date], (err, rows) => {
+	db.all(sql, [], (err, rows) => {
 		if (err) {
-			console.error(err);
+			console.error('Erreur récupération séjours en cours', err);
+			return res.status(500).send("Erreur récupération séjours en cours");
 		}
-		if (rows) {
-			const sejours = [];
-			rows.forEach(s => {
-				sejours.push({
-					dateAdmission: s.dateAdmission,
-					dateSortiePrevue: s.dateSortiePrevue,
-					dateSortieReelle: s.dateSortieReelle,
-					idPers: s.idPers,
-					nomPers: s.nomPers,
-					prenomPers: s.prenomPers,
-					numLit: s.numLit,
-					idChambre: s.idChambre,
-					numChambre: s.numChambre
-				});
-			});
-
-			console.log("c carré", sejours);
-			return res.json(sejours);
-		}
+		return res.json(rows);
 	});
 });
 
