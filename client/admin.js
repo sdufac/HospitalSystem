@@ -16,9 +16,6 @@ async function display() {
 			service.innerText = `Service : ${admin.service} 
 								 Rôle : ${admin.role}`;
 		}
-		if (admin.role === 'Responsable') {
-			document.getElementById("btnAddAdmin").classList.remove("d-none");
-		}
 	} catch (error) {
 		console.error("Erreur admin", error);
 	}
