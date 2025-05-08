@@ -6,7 +6,20 @@ const db = require('./db');
 
 //Retourne le medecin en session
 router.get('/medecin', isMedecin, (req, res) => {
-	res.json(req.session.medecin);
+	const medecin = req.session.medecin;
+	const sql = `SELECT idMedecinRef FROM Service WHERE idService = ?`;
+
+	db.get(sql, [medecin.idService], (err, row) => {
+		if (err) {
+			console.error("Erreur récupération médecin référent", err);
+			return res.status(500).send("Erreur serveur");
+		}
+
+		const estReferent = (row && row.idMedecinRef === medecin.idPers);
+
+		// On renvoie tout le medecin + estReferent
+		res.json({ ...medecin, estReferent });
+	});
 });
 
 //Retourne tout les patients (qq infos)
