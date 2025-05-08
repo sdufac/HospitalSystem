@@ -57,97 +57,96 @@ async function display() {
 	}
 
 	try {
-		const sejoursEC = await fetchSejourEC();
-		const div = document.getElementById("sejourEC");
-		if (sejoursEC) {
+		const sejourEC = await fetchSejourEC();
+		const divEC = document.getElementById("sejourEC");
+		if (sejourEC && sejourEC.length > 0) {
 			const table = document.createElement("table");
-			sejoursEC.forEach(s => {
+			table.className = "table table-hover table-striped";
+
+			const thead = document.createElement("thead");
+			thead.innerHTML = `
+      <tr>
+        <th>Date admission</th>
+        <th>Date sortie prévue</th>
+        <th>Chambre</th>
+        <th>Lit</th>
+        <th>Patient</th>
+        <th>Action</th>
+      </tr>
+    `;
+			table.appendChild(thead);
+
+			const tbody = document.createElement("tbody");
+
+			sejourEC.forEach(s => {
 				const tr = document.createElement("tr");
-
-				const td1 = document.createElement("td");
-				td1.innerText = s.dateAdmission;
-
-
-				const td2 = document.createElement("td");
-				td2.innerText = s.dateSortiePrevue;
-
-				const td3 = document.createElement("td");
-				td3.innerText = s.numChambre;
-
-				const td4 = document.createElement("td");
-				td4.innerText = s.numLit;
-
-				const td5 = document.createElement("td");
-				td5.innerText = s.prenomPers + " " + s.nomPers;
-
-				const td6 = document.createElement("td");
-				const button = document.createElement("button");
-				button.innerText = "Voir";
-				button.onclick = () => {
-					window.location.href = `/chambre/${s.idChambre}?date=${datedujour}`;
-				}
-				td6.appendChild(button);
-
-				tr.appendChild(td1);
-				tr.appendChild(td2);
-				tr.appendChild(td3);
-				tr.appendChild(td4);
-				tr.appendChild(td5);
-				tr.appendChild(td6);
-				table.appendChild(tr);
+				tr.innerHTML = `
+          <td>${s.dateAdmission}</td>
+          <td>${s.dateSortiePrevue}</td>
+          <td>${s.numChambre}</td>
+          <td>${s.numLit}</td>
+          <td>${s.prenomPers} ${s.nomPers}</td>
+          <td><button class="btn btn-sm btn-primary" onclick="window.location.href='/chambre/${s.idChambre}?date=${datedujour}'">Voir</button></td>
+        `;
+				tbody.appendChild(tr);
 			});
-			div.appendChild(table);
+
+			table.appendChild(tbody);
+			divEC.appendChild(table);
+
+		} else {
+			divEC.innerHTML += `<p class="text-muted">Aucun séjour en cours pour le moment.</p>`;
 		}
+
 	} catch (error) {
 		console.error("Erreur affichage sejour en cours", error);
 	}
 
 	try {
-		const sejoursPartis = await fetchSejourPartis();
-		const divPartis = document.getElementById("sejourPartis");
-		if (sejoursPartis) {
+		const sejourTermines = await fetchSejourTermines();
+		const divTermines = document.getElementById("sejourTermines");
+
+		if (sejourTermines && sejourTermines.length > 0) {
 			const table = document.createElement("table");
-			sejoursPartis.forEach(s => {
+			table.className = "table table-hover table-striped";
+
+			const thead = document.createElement("thead");
+			thead.innerHTML = `
+								<tr>
+									<th>Date admission</th>
+									<th>Date sortie prévue</th>
+									<th>Date sortie réelle</th>
+									<th>Chambre</th>
+									<th>Lit</th>
+									<th>Patient</th>
+									<th>Action</th>
+								</tr>
+								`;
+			table.appendChild(thead);
+
+			const tbody = document.createElement("tbody");
+
+			sejourTermines.forEach(s => {
 				const tr = document.createElement("tr");
-
-				const td1 = document.createElement("td");
-				td1.innerText = s.dateAdmission;
-
-				const td2 = document.createElement("td");
-				td2.innerText = s.dateSortiePrevue;
-
-				const td3 = document.createElement("td");
-				td3.innerText = s.dateSortieReelle;
-
-				const td4 = document.createElement("td");
-				td4.innerText = s.numChambre;
-
-				const td5 = document.createElement("td");
-				td5.innerText = s.numLit;
-
-				const td6 = document.createElement("td");
-				td6.innerText = s.prenomPers + " " + s.nomPers;
-
-				const td7 = document.createElement("td");
-				const button = document.createElement("button");
-				button.innerText = "Voir";
-				button.onclick = () => {
-					window.location.href = `/chambre/${s.idChambre}?date=${s.dateSortieReelle}`;
-				}
-				td7.appendChild(button);
-
-				tr.appendChild(td1);
-				tr.appendChild(td2);
-				tr.appendChild(td3);
-				tr.appendChild(td4);
-				tr.appendChild(td5);
-				tr.appendChild(td6);
-				tr.appendChild(td7);
-
-				table.appendChild(tr);
+				tr.innerHTML = `
+								<td>${s.dateAdmission}</td>
+								<td>${s.dateSortiePrevue}</td>
+								<td>${s.dateSortieReelle ? s.dateSortieReelle : "-"}</td>
+								<td>${s.numChambre}</td>
+								<td>${s.numLit}</td>
+								<td>${s.prenomPers} ${s.nomPers}</td>
+								<td><button class="btn btn-sm btn-primary" onclick="window.location.href='/chambre/${s.idChambre}?date=${s.dateSortieReelle || s.dateSortiePrevue}'">Voir</button></td>
+								`;
+				tbody.appendChild(tr);
 			});
-			divPartis.appendChild(table);
+
+			table.appendChild(tbody);
+			divTermines.appendChild(table);
+
+		} else {
+			divTermines.innerHTML += `<p class="text-muted">Aucun séjour terminé à afficher.</p>`;
 		}
+
 	} catch (error) {
 		console.error("Erreur affichage séjour partis", error);
 	}
@@ -209,7 +208,7 @@ async function fetchSejourEC() {
 	}
 }
 
-async function fetchSejourPartis() {
+async function fetchSejourTermines() {
 	try {
 		const response = await fetch('/api/sejour/partis');
 		if (!response.ok) {
