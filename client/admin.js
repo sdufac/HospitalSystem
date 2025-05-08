@@ -11,47 +11,54 @@ async function display() {
 		if (admin) {
 			const welcome = document.getElementById("welcome");
 			const service = document.getElementById("service");
+			const sectionGestionChambres = document.getElementById("sectionGestionChambres");
 
 			welcome.innerText = `Bienvenue ${admin.prenomPers} ${admin.nomPers} !`;
-			service.innerText = `Service : ${admin.service} 
-								 Rôle : ${admin.role}`;
+			if (admin.service) {
+				service.innerText = `Service : ${admin.service}\nRôle : ${admin.role}`;
+				await afficherChambres();
+			} else {
+				service.innerText = `Rôle : ${admin.role}`;
+				sectionGestionChambres.remove();
+			}
+
 		}
 	} catch (error) {
 		console.error("Erreur admin", error);
 	}
 
-	try {
-		const rooms = await fetchRooms();
-		if (rooms) {
-			const roomsTable = document.getElementById("rooms");
-			const trRoomName = document.createElement("tr");
-			const trRooms = document.createElement("tr");
-			roomsTable.appendChild(trRoomName);
-			roomsTable.appendChild(trRooms);
+	// try {
+	// 	const rooms = await fetchRooms();
+	// 	if (rooms) {
+	// 		const roomsTable = document.getElementById("rooms");
+	// 		const trRoomName = document.createElement("tr");
+	// 		const trRooms = document.createElement("tr");
+	// 		roomsTable.appendChild(trRoomName);
+	// 		roomsTable.appendChild(trRooms);
 
-			rooms.forEach(r => {
-				const thRoomName = document.createElement("th");
-				const tdRoom = document.createElement("td");
+	// 		rooms.forEach(r => {
+	// 			const thRoomName = document.createElement("th");
+	// 			const tdRoom = document.createElement("td");
 
-				thRoomName.innerText = r.numChambre;
-				tdRoom.innerText = `${r.nbLitsOccupes}/${r.capacite}`
-				tdRoom.onclick = () => {
-					window.location = `/chambre/${r.idChambre}`;
-				}
-				tdRoom.style = "cursor: pointer;"
+	// 			thRoomName.innerText = r.numChambre;
+	// 			tdRoom.innerText = `${r.nbLitsOccupes}/${r.capacite}`
+	// 			tdRoom.onclick = () => {
+	// 				window.location = `/chambre/${r.idChambre}`;
+	// 			}
+	// 			tdRoom.style = "cursor: pointer;"
 
 
-				if (ecartDate(datedujour, r.dateNettoyage) > 2) {
-					tdRoom.className = "rouge";
-				}
+	// 			if (ecartDate(datedujour, r.dateNettoyage) > 2) {
+	// 				tdRoom.className = "rouge";
+	// 			}
 
-				trRoomName.appendChild(thRoomName);
-				trRooms.appendChild(tdRoom);
-			});
-		}
-	} catch (error) {
-		console.error("Erreur client patients", error);
-	}
+	// 			trRoomName.appendChild(thRoomName);
+	// 			trRooms.appendChild(tdRoom);
+	// 		});
+	// 	}
+	// } catch (error) {
+	// 	console.error("Erreur client patients", error);
+	// }
 
 	try {
 		const sejourEC = await fetchSejourEC();
@@ -214,5 +221,39 @@ async function fetchSejourTermines() {
 		return await response.json();
 	} catch (error) {
 		console.error("Erreur fetch sejours partis", error);
+	}
+}
+
+async function afficherChambres() {
+	try {
+		const rooms = await fetchRooms();
+		if (rooms) {
+			const roomsTable = document.getElementById("rooms");
+			const trRoomName = document.createElement("tr");
+			const trRooms = document.createElement("tr");
+			roomsTable.appendChild(trRoomName);
+			roomsTable.appendChild(trRooms);
+
+			rooms.forEach(r => {
+				const thRoomName = document.createElement("th");
+				const tdRoom = document.createElement("td");
+
+				thRoomName.innerText = r.numChambre;
+				tdRoom.innerText = `${r.nbLitsOccupes}/${r.capacite}`
+				tdRoom.onclick = () => {
+					window.location = `/chambre/${r.idChambre}`;
+				}
+				tdRoom.style = "cursor: pointer;"
+
+				if (ecartDate(datedujour, r.dateNettoyage) > 2) {
+					tdRoom.className = "rouge";
+				}
+
+				trRoomName.appendChild(thRoomName);
+				trRooms.appendChild(tdRoom);
+			});
+		}
+	} catch (error) {
+		console.error("Erreur client patients", error);
 	}
 }

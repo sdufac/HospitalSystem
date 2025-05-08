@@ -34,15 +34,18 @@
 		<p id="service" class="fs-6 text-muted mb-1"></p>
 		<hr class="mt-2 mb-4">
 
-		<h3 class="mb-3 fs-5">Gestion des chambres</h3>
+		<div id="sectionGestionChambres">
+			<h3 class="mb-3 fs-5">Gestion des chambres</h3>
 
-		<div class="table-responsive">
-			<table id="rooms" class="table table-bordered text-center">
-				<!-- Contenu injecté par admin.js -->
-			</table>
+			<div class="table-responsive">
+				<table id="rooms" class="table table-bordered text-center">
+					<!-- Contenu injecté par admin.js -->
+				</table>
+			</div>
+
+			<hr class="my-4">
 		</div>
 
-		<hr class="my-4">
 		<div id="sejourEC">
 			<h2 class="mb-3 fs-5">Séjour en cours dans votre service</h2>
 		</div>
@@ -55,7 +58,7 @@
 
 		<div class="d-flex justify-content-end gap-3">
 			<a href="/addpatient" class="btn btn-success">Ajouter un patient</a>
-			<a id="btnAddAdmin" href="/addadmin" class="btn btn-primary d-none">Ajouter un admin</a>
+			<a id="btnAddAdmin" href="/addadmin" class="btn btn-primary">Ajouter un admin</a>
 			<a href="/addpersnet" class="btn btn-warning">Ajouter un personnel de nettoyage</a>
 		</div>
 
