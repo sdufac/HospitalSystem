@@ -67,6 +67,14 @@ button.addEventListener("click", async function () {
 							<input type="date" name="date" class="form-control form-control-sm w-auto">
 							<input type="submit" value="Confirmer" class="btn btn-primary btn-sm">
 						`;
+						// Bloquer l'envoi si aucune date n'est sélectionnée
+						form.addEventListener('submit', (e) => {
+							const dateInput = form.querySelector('input[name="date"]');
+							if (!dateInput.value) {
+								e.preventDefault();
+								alert("Veuillez sélectionner une date avant de confirmer !");
+							}
+						});
 
 						divLit.appendChild(form);
 					}
