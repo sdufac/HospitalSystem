@@ -1,22 +1,22 @@
 const express = require('express');
 const router = express.Router();
-const {isMedecin, isAdmin, isLogged} = require('./tool');
+const { isMedecin, isAdmin, isLogged } = require('./tool');
 const db = require('./db');
 
 
 //Retourne le medecin en session
-router.get('/medecin',isMedecin, (req,res) => {
+router.get('/medecin', isMedecin, (req, res) => {
 	res.json(req.session.medecin);
 });
 
 //Retourne tout les patients (qq infos)
-router.get('/patients',isLogged,(req,res) => {
+router.get('/patients', isLogged, (req, res) => {
 	const sql = `SELECT p.idPers, p.nomPers, p.prenomPers
 		     FROM Personne p
 		     JOIN Patient pa ON pa.idPers = p.idPers`
 
-	db.all(sql, (err ,rows) => {
-		if(err){
+	db.all(sql, (err, rows) => {
+		if (err) {
 			console.error(err);
 			next(err);
 		}
@@ -37,7 +37,7 @@ router.get('/patients',isLogged,(req,res) => {
 });
 
 //Retourne tout les patients du service de la personne connecté en session
-router.get('/patients/service', isLogged, (req,res) =>{
+router.get('/patients/service', isLogged, (req, res) => {
 	const sql = `SELECT DISTINCT p.idPers, p.nomPers, p.prenomPers, p.dNaisPers, p.numTelPers, p.adressePers, pa.numDossierMed, pa.motifHospitalisation
 		    FROM Patient pa 
 		    JOIN Personne p ON pa.idPers = p.idPers 
@@ -53,23 +53,23 @@ router.get('/patients/service', isLogged, (req,res) =>{
 	console.log(date);
 
 	let idService = 0;
-	if(req.session.medecin){
+	if (req.session.medecin) {
 		idService = req.session.medecin.idService;
-	}else if(req.session.admin){
+	} else if (req.session.admin) {
 		idService = req.session.admin.idService;
 	}
 
-	db.all(sql,[idService,date,date], (err,rows) =>{
-		if(err){
+	db.all(sql, [idService, date, date], (err, rows) => {
+		if (err) {
 			console.error(err.message);
 			return res.status(500).send("Erreur lors de la recup des infos des patients");
 		}
-		if(!rows){
+		if (!rows) {
 			return res.status(404).send("Patients introuvable");
 		}
 
 		let patients = [];
-		rows.forEach(row =>{
+		rows.forEach(row => {
 			let patient = {
 				idPers: row.idPers,
 				nomPers: row.nomPers,
@@ -84,12 +84,12 @@ router.get('/patients/service', isLogged, (req,res) =>{
 			patients.push(patient);
 		});
 		res.json(patients);
-		
+
 	});
 });
 
 //Retourne toutes les infos d'un patient specifique
-router.get('/patient/:id',isLogged ,(req,res, next) =>{
+router.get('/patient/:id', isLogged, (req, res, next) => {
 	const id = req.params.id;
 
 	const sql = `SELECT p.idPers, p.nomPers, p.prenomPers, p.dNaisPers, p.numTelPers, p.adressePers,
@@ -125,11 +125,11 @@ router.get('/patient/:id',isLogged ,(req,res, next) =>{
 		     LEFT JOIN Antecedent a ON a.idPatient = p.idPers
 
 		     WHERE p.idPers = ?;`
-	db.all(sql,id,(err, rows) => {
-		if(err){
+	db.all(sql, id, (err, rows) => {
+		if (err) {
 			console.error(err);
 			return next(err);
-		}else if(rows.length === 0){
+		} else if (rows.length === 0) {
 			console.log("TABLEAU PATIENT VIDE");
 			return;
 		}
@@ -152,9 +152,9 @@ router.get('/patient/:id',isLogged ,(req,res, next) =>{
 		const soinsMap = new Map();
 		const antecedentsMap = new Set();
 
-		for (const row of rows){
-			if(row.idVisite){
-				if(!visitesMap.has(row.idVisite)){
+		for (const row of rows) {
+			if (row.idVisite) {
+				if (!visitesMap.has(row.idVisite)) {
 					visitesMap.set(row.idVisite, {
 						idVisite: row.idVisite,
 						dateVisite: row.dateVisite,
@@ -166,8 +166,8 @@ router.get('/patient/:id',isLogged ,(req,res, next) =>{
 						examens: [],
 					});
 				}
-				
-				if(row.idExamen){
+
+				if (row.idExamen) {
 					visitesMap.get(row.idVisite).examens.push({
 						idExamen: row.idExamen,
 						typeExamen: row.typeExamen,
@@ -176,8 +176,8 @@ router.get('/patient/:id',isLogged ,(req,res, next) =>{
 				}
 			}
 
-			if(row.idSoin){
-				if(!soinsMap.has(row.idSoin)){
+			if (row.idSoin) {
+				if (!soinsMap.has(row.idSoin)) {
 					soinsMap.set(row.idSoin, {
 						idSoin: row.idSoin,
 						dateHeureSoin: row.dateHeureSoin,
@@ -202,14 +202,14 @@ router.get('/patient/:id',isLogged ,(req,res, next) =>{
 						medicament: []
 					});
 				}
-				if(row.nomMedicament){
+				if (row.nomMedicament) {
 					soinsMap.get(row.idSoin).medicament.push({
 						nomMedicament: row.nomMedicament,
 						quantite: row.quantite
 					});
 				}
 			}
-			if(row.idAntecedent && !antecedentsMap.has(row.idAntecedent)){
+			if (row.idAntecedent && !antecedentsMap.has(row.idAntecedent)) {
 				antecedentsMap.add(row.idAntecedent);
 				patient.antecedents.push({
 					idAntecedent: row.idAntecedent,
@@ -229,41 +229,41 @@ router.get('/patient/:id',isLogged ,(req,res, next) =>{
 
 
 //Retourne tout les infirmiers
-router.get('/infirmiers',isMedecin,(req,res) =>{
+router.get('/infirmiers', isMedecin, (req, res) => {
 	const sql = `SELECT p.idPers, p.nomPers, p.prenomPers
 		     FROM Personne p
 		     JOIN Infirmier i ON p.idPers = i.idPers`
-	
-	db.all(sql,(err,rows) => {
+
+	db.all(sql, (err, rows) => {
 		const infirmiers = [];
 
 		rows.forEach(row => {
-			infirmiers.push({ idPers: row.idPers, nomPers: row.nomPers, prenomPers:row.prenomPers});
+			infirmiers.push({ idPers: row.idPers, nomPers: row.nomPers, prenomPers: row.prenomPers });
 		});
 		res.json(infirmiers);
 	});
 });
 
 //Retourne tout les medicaments
-router.get('/medicaments',isMedecin,(req,res) => {
+router.get('/medicaments', isMedecin, (req, res) => {
 	const sql = `SELECT * FROM Medicament`;
 
-	db.all(sql, (err,rows) => {
-		if(err){
+	db.all(sql, (err, rows) => {
+		if (err) {
 			console.error(err);
 		}
 
 		const medicaments = [];
 
 		rows.forEach(row => {
-			medicaments.push({idMedicament: row.idMedicament, nomMedicament: row.nomMedicament});
+			medicaments.push({ idMedicament: row.idMedicament, nomMedicament: row.nomMedicament });
 		});
 		return res.json(medicaments);
 	});
 });
 
 //Retourne les infos de toutes les chambres du service de l'admin en session
-router.get('/chambres',isAdmin,(req,res) => {
+router.get('/chambres', isAdmin, (req, res) => {
 	const sql = `SELECT c.idChambre, c.numChambre, c.capacite,
 		     COUNT(DISTINCT s.idSejour) AS nbLitsOccupes,
 		     MAX(n.dateNettoyage) AS derniereDateNettoyage
@@ -282,8 +282,8 @@ router.get('/chambres',isAdmin,(req,res) => {
 		     GROUP BY c.idChambre, c.numChambre, c.capacite
 		     ORDER BY c.numChambre;`
 
-	db.all(sql,req.session.admin.idService,(err,rows) =>{
-		if(err){
+	db.all(sql, req.session.admin.idService, (err, rows) => {
+		if (err) {
 			console.error(err);
 		}
 
@@ -305,7 +305,7 @@ router.get('/chambres',isAdmin,(req,res) => {
 	});
 });
 
-router.get('/sejour/encours',isAdmin,(req,res) => {
+router.get('/sejour/encours', isAdmin, (req, res) => {
 
 	const date = new Date().toISOString().split('T')[0];
 
@@ -321,11 +321,11 @@ router.get('/sejour/encours',isAdmin,(req,res) => {
 		     AND s.dateAdmission < ?
 		     AND (s.dateSortieReelle IS NULL OR s.dateSortieReelle > ?);`;
 
-	db.all(sql,[req.session.admin.idService,date,date],(err,rows) => {
-		if(err){
+	db.all(sql, [req.session.admin.idService, date, date], (err, rows) => {
+		if (err) {
 			console.error(err);
 		}
-		if(rows){
+		if (rows) {
 			const sejours = [];
 			rows.forEach(s => {
 				sejours.push({
@@ -341,22 +341,45 @@ router.get('/sejour/encours',isAdmin,(req,res) => {
 				});
 			});
 
-			console.log("c carré",sejours);
+			console.log("c carré", sejours);
 			return res.json(sejours);
 		}
 	});
 });
 
-router.get('/sejour/terminee',isAdmin,(req,res) => {
+// Retourne les séjours terminés
+// (càd ceux dont la date de sortie réelle est non nulle)
+router.get('/sejour/partis', isAdmin, (req, res) => {
+	const sql = `
+        SELECT s.dateAdmission, s.dateSortiePrevue, s.dateSortieReelle, c.numChambre, l.numLit, p.prenomPers, p.nomPers, c.idChambre
+        FROM Sejour s
+        JOIN Lit l ON s.idLit = l.idLit
+        JOIN Chambre c ON l.idChambre = c.idChambre
+        JOIN Patient pa ON s.idPatient = pa.idPers
+        JOIN Personne p ON pa.idPers = p.idPers
+        WHERE s.dateSortieReelle IS NOT NULL
+    `;
+
+	db.all(sql, [], (err, rows) => {
+		if (err) {
+			console.error(err.message);
+			res.status(500).send('Erreur récupération séjours partis');
+		} else {
+			res.json(rows);
+		}
+	});
+});
+
+router.get('/sejour/terminee', isAdmin, (req, res) => {
 
 });
 
 //Retourne l'admin en session
-router.get('/getadmin',isAdmin, (req,res) => {
+router.get('/getadmin', isAdmin, (req, res) => {
 	res.json(req.session.admin);
 });
 
-router.get('/chambre/:id/sejour/:date',isAdmin, (req,res) => {
+router.get('/chambre/:id/sejour/:date', isAdmin, (req, res) => {
 	const id = req.params.id;
 	const date = req.params.date;
 
@@ -369,11 +392,11 @@ router.get('/chambre/:id/sejour/:date',isAdmin, (req,res) => {
 		     LEFT JOIN Personne p ON s.idPatient= p.idPers
 		     WHERE c.idChambre = ?;`;
 
-	db.all(sql,[date,date,id],(err,rows) => {
-		if(err){
+	db.all(sql, [date, date, id], (err, rows) => {
+		if (err) {
 			console.error(err);
 		}
-		
+
 		const chambre = {
 			lits: []
 		};
@@ -383,8 +406,8 @@ router.get('/chambre/:id/sejour/:date',isAdmin, (req,res) => {
 				numLit: row.numLit
 			};
 
-			if(row.idSejour){
-				lit.sejour =  {
+			if (row.idSejour) {
+				lit.sejour = {
 					idSejour: row.idSejour,
 					idPers: row.idPers,
 					prenomPers: row.prenomPers,
@@ -392,7 +415,7 @@ router.get('/chambre/:id/sejour/:date',isAdmin, (req,res) => {
 					dateAdmission: row.dateAdmission,
 					dateSortiePrevue: row.dateSortiePrevue
 				};
-				if(row.dateSortieReelle){
+				if (row.dateSortieReelle) {
 					lit.sejour.dateSortieReelle = row.dateSortieReelle
 				}
 			}
@@ -404,16 +427,16 @@ router.get('/chambre/:id/sejour/:date',isAdmin, (req,res) => {
 });
 
 //Renvoie tout le personnel de nettoyage
-router.get('/nettoyage',isAdmin,(req,res) => {
+router.get('/nettoyage', isAdmin, (req, res) => {
 	const sql = `SELECT p.idPers, p.nomPers, p.prenomPers
 		     FROM Personne p
 		     JOIN PersonnelNettoyage pn ON pn.idPers = p.idPers;`
 
-	db.all(sql,(err, rows) => {
+	db.all(sql, (err, rows) => {
 		const pers = [];
 
 		rows.forEach(row => {
-			const pernet ={
+			const pernet = {
 				idPers: row.idPers,
 				nomPers: row.nomPers,
 				prenomPers: row.prenomPers
@@ -435,15 +458,15 @@ router.get('/chambre/:id', isAdmin, (req, res) => {
 		     FROM Lit l
 		     WHERE l.idChambre = ?`
 
-	db.all(sql,id,(err, rows) => {
-		if(err){
+	db.all(sql, id, (err, rows) => {
+		if (err) {
 			return console.error(err);
 		}
 
 		const lits = []
 
 		rows.forEach(l => {
-			const lit= {
+			const lit = {
 				idLit: l.idLit,
 				numLit: l.numLit
 			}
@@ -456,13 +479,13 @@ router.get('/chambre/:id', isAdmin, (req, res) => {
 });
 
 //renvoie tout les services de l'hopital
-router.get('/service',(req,res,next) => {
+router.get('/service', (req, res, next) => {
 	const sql = `SELECT s.idService, s.nomService 
 		     FROM Service s`
 
-	try{
-		db.all(sql,(err,rows) => {
-			if(err){
+	try {
+		db.all(sql, (err, rows) => {
+			if (err) {
 				throw new Error("Erreur lors de la récuperation des services");
 			}
 
@@ -478,21 +501,21 @@ router.get('/service',(req,res,next) => {
 
 			return res.json(services);
 		});
-	}catch(err){
+	} catch (err) {
 		next(err);
 	}
 })
 
-router.get('/soin/:id',isMedecin,(req,res) => {
+router.get('/soin/:id', isMedecin, (req, res) => {
 	const id = req.params.id;
 
 	const sql = `SELECT * FROM Soin s
 		     JOIN Necessiter n ON s.idSoin = n.idSoin
 		     WHERE s.idSoin = ?`;
 
-	db.get(sql, id, (err,row) => {
-		if(err){
-			console.error("Erreur lors de la récuperation du soin:",err);
+	db.get(sql, id, (err, row) => {
+		if (err) {
+			console.error("Erreur lors de la récuperation du soin:", err);
 		}
 		const soin = {
 			idSoin: row.idSoin,
@@ -509,7 +532,7 @@ router.get('/soin/:id',isMedecin,(req,res) => {
 	});
 });
 
-router.get('/personnel/service/:id',isMedecin,(req, res) => {
+router.get('/personnel/service/:id', isMedecin, (req, res) => {
 	const sql = `SELECT p.idPers, p.nomPers, p.prenomPers, p.dNaisPers, p.numTelPers, p.adressePers,
 		     m.idPers AS idMedecin, m.specialite, m.mdp, m.idService AS serviceMedecin,
 		     i.idPers AS idInfirmier, i.datePrisePoste, i.idService AS serviceInfirmier
@@ -518,8 +541,8 @@ router.get('/personnel/service/:id',isMedecin,(req, res) => {
 		     LEFT JOIN Infirmier i ON p.idPers = i.idPers
 		     WHERE m.idService = ? OR i.idService = ?;`
 
-	db.all(sql,[req.params.id,req.params.id],(err,rows) => {
-		if(err){
+	db.all(sql, [req.params.id, req.params.id], (err, rows) => {
+		if (err) {
 			console.error("Erreur recuperation du personnel de service", err);
 		}
 		const pers = {
@@ -527,10 +550,10 @@ router.get('/personnel/service/:id',isMedecin,(req, res) => {
 			med: []
 		};
 		rows.forEach(row => {
-			if(row.specialite){
+			if (row.specialite) {
 				pers.med.push({
 					idPers: row.idPers,
-					nomPers:row.nomPers,
+					nomPers: row.nomPers,
 					prenomPers: row.prenomPers,
 					dNaisPers: row.dNaisPers,
 					numTelPers: row.numTelPers,
@@ -538,10 +561,10 @@ router.get('/personnel/service/:id',isMedecin,(req, res) => {
 					specialite: row.specialite,
 					mdp: row.mdp
 				});
-			}else if(row.datePrisePoste){
+			} else if (row.datePrisePoste) {
 				pers.inf.push({
 					idPers: row.idPers,
-					nomPers:row.nomPers,
+					nomPers: row.nomPers,
 					prenomPers: row.prenomPers,
 					dNaisPers: row.dNaisPers,
 					numTelPers: row.numTelPers,
@@ -551,12 +574,12 @@ router.get('/personnel/service/:id',isMedecin,(req, res) => {
 			}
 		});
 
-		console.log("PERS: ",pers);
+		console.log("PERS: ", pers);
 		return res.json(pers);
 	});
 });
 
-router.get('/personnel/:id',isLogged,(req, res) => {
+router.get('/personnel/:id', isLogged, (req, res) => {
 	const sql = `SELECT p.idPers, p.nomPers, p.prenomPers, p.dNaisPers, p.numTelPers, p.adressePers,
 		     m.idPers AS idMedecin, m.specialite, m.mdp,
 		     i.idPers AS idInfirmier, i.datePrisePoste
@@ -567,13 +590,13 @@ router.get('/personnel/:id',isLogged,(req, res) => {
 
 	console.log("lqhfelkID: ", req.params.id)
 
-	db.get(sql,req.params.id, (err, row) => {
-		if(err){
-			console.error("Erreur lors de la récuperation du personnel",err);
+	db.get(sql, req.params.id, (err, row) => {
+		if (err) {
+			console.error("Erreur lors de la récuperation du personnel", err);
 		}
 		console.log("Personne retrouvé:", row);
 
-		if(row.idMedecin){
+		if (row.idMedecin) {
 			const medecin = {
 				idPers: row.idPers,
 				nomPers: row.nomPers,
@@ -586,7 +609,7 @@ router.get('/personnel/:id',isLogged,(req, res) => {
 
 			return res.json(medecin);
 		}
-		else if(row.idInfirmier){
+		else if (row.idInfirmier) {
 			const infirmier = {
 				idPers: row.idPers,
 				nomPers: row.nomPers,

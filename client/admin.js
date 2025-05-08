@@ -101,6 +101,56 @@ async function display() {
 	} catch (error) {
 		console.error("Erreur affichage sejour en cours", error);
 	}
+
+	try {
+		const sejoursPartis = await fetchSejourPartis();
+		const divPartis = document.getElementById("sejourPartis");
+		if (sejoursPartis) {
+			const table = document.createElement("table");
+			sejoursPartis.forEach(s => {
+				const tr = document.createElement("tr");
+
+				const td1 = document.createElement("td");
+				td1.innerText = s.dateAdmission;
+
+				const td2 = document.createElement("td");
+				td2.innerText = s.dateSortiePrevue;
+
+				const td3 = document.createElement("td");
+				td3.innerText = s.dateSortieReelle;
+
+				const td4 = document.createElement("td");
+				td4.innerText = s.numChambre;
+
+				const td5 = document.createElement("td");
+				td5.innerText = s.numLit;
+
+				const td6 = document.createElement("td");
+				td6.innerText = s.prenomPers + " " + s.nomPers;
+
+				const td7 = document.createElement("td");
+				const button = document.createElement("button");
+				button.innerText = "Voir";
+				button.onclick = () => {
+					window.location.href = `/chambre/${s.idChambre}?date=${s.dateSortieReelle}`;
+				}
+				td7.appendChild(button);
+
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				tr.appendChild(td3);
+				tr.appendChild(td4);
+				tr.appendChild(td5);
+				tr.appendChild(td6);
+				tr.appendChild(td7);
+
+				table.appendChild(tr);
+			});
+			divPartis.appendChild(table);
+		}
+	} catch (error) {
+		console.error("Erreur affichage séjour partis", error);
+	}
 }
 
 async function fetchRooms() {
@@ -156,5 +206,17 @@ async function fetchSejourEC() {
 		return sejours;
 	} catch (error) {
 		console.error("Erreur sejour en cours", error);
+	}
+}
+
+async function fetchSejourPartis() {
+	try {
+		const response = await fetch('/api/sejour/partis');
+		if (!response.ok) {
+			throw new Error('Erreur récupération séjours partis');
+		}
+		return await response.json();
+	} catch (error) {
+		console.error("Erreur fetch sejours partis", error);
 	}
 }
