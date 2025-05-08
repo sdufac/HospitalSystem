@@ -272,19 +272,19 @@ app.post('/addpatient', isAdmin, (req, res, next) => {
 
 				});
 
-				for(let i = 0; i<typeAntecedents.length; i++){
+				for (let i = 0; typeAntecedents && i < typeAntecedents.length; i++) {
 					const type = typeAntecedents[i];
 					const description = descriptionAntecedant[i];
 					const date = dateAntecedent[i];
 
 					console.log(`ANTECEDENT: ${type}, ${description}, ${date}`);
-					db.run(sqlAntecedents, [type,description,date,id], (err) => {
-						if(err){
+					db.run(sqlAntecedents, [type, description, date, id], (err) => {
+						if (err) {
 							console.error("Erreur insertion antecedant");
 						}
 					});
 				}
-				
+
 				return res.redirect('/admin');
 			});
 	} catch (err) {
