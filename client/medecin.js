@@ -9,11 +9,9 @@ async function display() {
 	try {
 		const medecin = await fetchMedecin();
 		if (medecin) {
+			welcome.innerHTML = "Bonjour " + medecin.prenomPers + " " + medecin.nomPers + " !";
 			if (medecin.estResponsable) {
-				welcome.innerHTML = "Bonjour " + medecin.prenomPers + " " + medecin.nomPers + " !";
 				welcome.innerHTML += `<p class="text-success mt-2 mb-2 fs-5"><em>Médecin Référent du service ${medecin.service}.</em></p>`;
-			} else {
-				welcome.innerHTML = "Bonjour " + medecin.prenomPers + " " + medecin.nomPers + " !";
 			}
 
 			patient.innerHTML = "Patients actuellement au service " + medecin.service + " :";
