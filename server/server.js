@@ -57,7 +57,7 @@ app.post('/login', (req, res, next) => {
 				throw new Error(err.message);
 			} else if (!row) {
 				console.log("Mauvais login ou mdp");
-				res.redirect('/login');
+				return res.redirect('/login?error=1');
 			} else if (row.idMedecin) {
 				//Creation d'objet
 				const medecin = {
@@ -92,7 +92,9 @@ app.post('/login', (req, res, next) => {
 				req.session.admin = admin;
 				res.redirect('/admin');
 			} else {
-				throw new Error("Erreur lors de la connection");
+				// throw new Error("Erreur lors de la connection");
+				console.log("Mauvais login ou mdp");
+				return res.redirect('/login?error=1');
 			}
 		});
 	} catch (err) {

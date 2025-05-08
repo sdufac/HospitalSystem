@@ -17,6 +17,10 @@
 		<div class="card p-4 shadow" style="min-width: 300px; max-width: 400px;">
 			<h2 class="text-center mb-4">Connexion</h2>
 
+			<div id="errorMessage" class="alert alert-danger text-center p-2" style="display: none;">
+				Identifiant ou mot de passe incorrect
+			</div>
+
 			<form action="/login" method="POST" id="form">
 				<div class="mb-3">
 					<label for="username" class="form-label">Nom d'utilisateur</label>
@@ -34,4 +38,5 @@
 	</div>
 	<script src="/connection.js"> </script>
 </body>
+
 </html>
