@@ -89,7 +89,7 @@ router.get('/patients/service', isLogged, (req,res) =>{
 });
 
 //Retourne toutes les infos d'un patient specifique
-router.get('/patient/:id',isLogged ,(req,res, next) =>{
+router.get('/patient/:id',isLogged ,req,res, next) =>{
 	const id = req.params.id;
 
 	const sql = `SELECT p.idPers, p.nomPers, p.prenomPers, p.dNaisPers, p.numTelPers, p.adressePers,
