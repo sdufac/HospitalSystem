@@ -13,7 +13,11 @@ async function display() {
 			const service = document.getElementById("service");
 
 			welcome.innerText = `Bienvenue ${admin.prenomPers} ${admin.nomPers} !`;
-			service.innerText = `Service : ${admin.service}`;
+			service.innerText = `Service : ${admin.service} 
+								 Rôle : ${admin.role}`;
+		}
+		if (admin.role === 'Responsable') {
+			document.getElementById("btnAddAdmin").classList.remove("d-none");
 		}
 	} catch (error) {
 		console.error("Erreur admin", error);
@@ -52,10 +56,10 @@ async function display() {
 		console.error("Erreur client patients", error);
 	}
 
-	try{
+	try {
 		const sejoursEC = await fetchSejourEC();
 		const div = document.getElementById("sejourEC");
-		if(sejoursEC){
+		if (sejoursEC) {
 			const table = document.createElement("table");
 			sejoursEC.forEach(s => {
 				const tr = document.createElement("tr");
@@ -94,7 +98,7 @@ async function display() {
 			});
 			div.appendChild(table);
 		}
-	}catch(error){
+	} catch (error) {
 		console.error("Erreur affichage sejour en cours", error);
 	}
 }
@@ -141,16 +145,16 @@ function ecartDate(date1, date2) {
 	return diffJour;
 }
 
-async function fetchSejourEC(){
-	try{
+async function fetchSejourEC() {
+	try {
 		const response = await fetch('/api/sejour/encours');
-		if(!response.ok){
+		if (!response.ok) {
 			throw new Error('Erreur recuperation sejour en cours');
 		}
 
 		const sejours = await response.json();
 		return sejours;
-	}catch (error) {
+	} catch (error) {
 		console.error("Erreur sejour en cours", error);
 	}
 }
