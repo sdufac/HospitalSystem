@@ -2,21 +2,21 @@ const dateInput = document.getElementById("date");
 const button = document.getElementById("search");
 
 const dateParam = new URLSearchParams(window.location.search).get('date');
-if (dateParam){
+if (dateParam) {
 	dateInput.value = dateParam;
 }
 form();
 
 const formMenage = document.getElementById("formMenage");
-formMenage.addEventListener('submit',function(e) {
-	if(!formulaireComplet(formMenage)){
+formMenage.addEventListener('submit', function (e) {
+	if (!formulaireComplet(formMenage)) {
 		e.preventDefault();
 	}
 });
 
 const formSejour = document.getElementById("formSejour");
-formSejour.addEventListener('submit',function(e) {
-	if(!formulaireComplet(formSejour)){
+formSejour.addEventListener('submit', function (e) {
+	if (!formulaireComplet(formSejour)) {
 		e.preventDefault();
 	}
 });
@@ -71,12 +71,12 @@ button.addEventListener("click", async function () {
 						divLit.appendChild(form);
 					}
 
-					const patientButton = document.createElement("button");
-					patientButton.innerText = "Patient";
-					patientButton.onclick = () => {
-						window.location.href = `/patient/${l.sejour.idPers}`;
-					}
-					p.appendChild(patientButton);
+					// const patientButton = document.createElement("button");
+					// patientButton.innerText = "Patient";
+					// patientButton.onclick = () => {
+					// 	window.location.href = `/patient/${l.sejour.idPers}`;
+					// }
+					// p.appendChild(patientButton);
 
 					divLit.appendChild(p);
 				} else {
@@ -264,7 +264,7 @@ async function fetchLits() {
 function formulaireComplet(form) {
 	const elements = form.querySelectorAll('input, textarea, select');
 	for (let el of elements) {
-		if(el.type !== 'submit' && el.type !== 'button' && !el.disabled && !el.value.trim()) {
+		if (el.type !== 'submit' && el.type !== 'button' && !el.disabled && !el.value.trim()) {
 			return false;
 		}
 	}
