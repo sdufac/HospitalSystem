@@ -318,7 +318,7 @@ router.get('/chambres', isAdmin, (req, res) => {
 	});
 });
 
-// Retourne les séjours encours
+// Retourne les séjours encours de l'admin en session
 router.get('/sejour/encours', isAdmin, (req, res) => {
 	const sql = `
         SELECT 
@@ -334,12 +334,13 @@ router.get('/sejour/encours', isAdmin, (req, res) => {
         JOIN Chambre c ON l.idChambre = c.idChambre
         JOIN Patient pa ON s.idPatient = pa.idPers
         JOIN Personne per ON pa.idPers = per.idPers
-        WHERE (s.dateSortieReelle IS NULL)
+        WHERE c.idService = ?
         AND s.dateAdmission <= DATE('now')
+        AND (s.dateSortieReelle IS NULL)
         AND (s.dateSortiePrevue >= DATE('now') OR s.dateSortiePrevue IS NULL);
     `;
 
-	db.all(sql, [], (err, rows) => {
+	db.all(sql, [req.session.admin.idService], (err, rows) => {
 		if (err) {
 			console.error('Erreur récupération séjours en cours', err);
 			return res.status(500).send("Erreur récupération séjours en cours");
@@ -348,20 +349,29 @@ router.get('/sejour/encours', isAdmin, (req, res) => {
 	});
 });
 
-// Retourne les séjours terminés
+// Retourne les séjours terminés de l'admin en session
 // (càd ceux dont la date de sortie réelle est non nulle)
 router.get('/sejour/partis', isAdmin, (req, res) => {
 	const sql = `
-        SELECT s.dateAdmission, s.dateSortiePrevue, s.dateSortieReelle, c.numChambre, l.numLit, p.prenomPers, p.nomPers, c.idChambre
+        SELECT 
+            s.dateAdmission, 
+            s.dateSortiePrevue, 
+            s.dateSortieReelle, 
+            c.numChambre, 
+            l.numLit, 
+            p.prenomPers, 
+            p.nomPers, 
+            c.idChambre
         FROM Sejour s
         JOIN Lit l ON s.idLit = l.idLit
         JOIN Chambre c ON l.idChambre = c.idChambre
         JOIN Patient pa ON s.idPatient = pa.idPers
         JOIN Personne p ON pa.idPers = p.idPers
         WHERE s.dateSortieReelle IS NOT NULL
+        AND c.idService = ?
     `;
 
-	db.all(sql, [], (err, rows) => {
+	db.all(sql, [req.session.admin.idService], (err, rows) => {
 		if (err) {
 			console.error(err.message);
 			res.status(500).send('Erreur récupération séjours partis');
@@ -370,6 +380,7 @@ router.get('/sejour/partis', isAdmin, (req, res) => {
 		}
 	});
 });
+
 
 router.get('/sejour/terminee', isAdmin, (req, res) => {
 
@@ -395,17 +406,14 @@ router.get('/chambre/:id/sejour/:date', isAdmin, (req, res) => {
 
 	db.all(sql, [date, date, id], (err, rows) => {
 		if (err) {
-			console.error(err);
+			console.error("Erreur SQL dans /api/chambre/:id/sejour/:date", err);
+			return res.status(500).send("Erreur interne");
 		}
 
-		const chambre = {
-			lits: []
-		};
+		const chambre = { lits: [] };
 
 		rows.forEach(row => {
-			const lit = {
-				numLit: row.numLit
-			};
+			const lit = { numLit: row.numLit };
 
 			if (row.idSejour) {
 				lit.sejour = {
@@ -417,7 +425,7 @@ router.get('/chambre/:id/sejour/:date', isAdmin, (req, res) => {
 					dateSortiePrevue: row.dateSortiePrevue
 				};
 				if (row.dateSortieReelle) {
-					lit.sejour.dateSortieReelle = row.dateSortieReelle
+					lit.sejour.dateSortieReelle = row.dateSortieReelle;
 				}
 			}
 			chambre.lits.push(lit);
@@ -426,6 +434,7 @@ router.get('/chambre/:id/sejour/:date', isAdmin, (req, res) => {
 		return res.json(chambre);
 	});
 });
+
 
 //Renvoie tout le personnel de nettoyage
 router.get('/nettoyage', isAdmin, (req, res) => {

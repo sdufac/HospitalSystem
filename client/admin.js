@@ -241,7 +241,7 @@ async function afficherChambres() {
 				thRoomName.innerText = r.numChambre;
 				tdRoom.innerText = `${r.nbLitsOccupes}/${r.capacite}`
 				tdRoom.onclick = () => {
-					window.location = `/chambre/${r.idChambre}`;
+					window.location = `/chambre/${r.idChambre}?date=${datedujour}`;
 				}
 				tdRoom.style = "cursor: pointer;"
 

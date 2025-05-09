@@ -2,136 +2,110 @@ const title = document.getElementById("title");
 const welcome = document.getElementById("welcome");
 const patient = document.getElementById("patient");
 const patientDiv = document.getElementById("patients");
-display();
 
+display();
 
 async function display() {
 	try {
 		const medecin = await fetchMedecin();
-		if (medecin) {
-			welcome.innerHTML = "Bonjour " + medecin.prenomPers + " " + medecin.nomPers + " !";
-			if (medecin.estResponsable) {
-				welcome.innerHTML += `<p class="text-success mt-2 mb-2 fs-5"><em>Médecin Référent du service ${medecin.service}.</em></p>`;
-			}
+		if (!medecin) throw new Error("Médecin non trouvé");
 
-			patient.innerHTML = "Patients actuellement au service " + medecin.service + " :";
+		afficherBienvenue(medecin);
+		await afficherPersonnel(medecin.idService);
+		await afficherPatients();
 
-			const personnes = await fetchPersonne(medecin.idService);
-			console.log("PERS: ", personnes);
-
-			if (personnes) {
-				const persondata = document.getElementById("persondata");
-
-				personnes.inf.forEach(i => {
-					const opt = document.createElement("option");
-					opt.value = `${i.prenomPers} ${i.nomPers}`;
-
-					persondata.appendChild(opt);
-				});
-
-				personnes.med.forEach(m => {
-					const opt = document.createElement("option");
-					opt.value = `${m.prenomPers} ${m.nomPers}`;
-
-					persondata.appendChild(opt);
-				});
-
-				const button = document.getElementById("select");
-				const inputpers = document.getElementById("person");
-
-				button.onclick = () => {
-					if (personnes.med.find(m => m.prenomPers + " " + m.nomPers === inputpers.value)) {
-						const m = personnes.med.find(m => m.prenomPers + " " + m.nomPers === inputpers.value);
-
-						console.log("Medecin trouvé", m);
-						window.location.href = `/personnel/${m.idPers}`;
-					} else if (personnes.inf.find(i => i.prenomPers + " " + i.nomPers === inputpers.value)) {
-						const i = personnes.inf.find(i => i.prenomPers + " " + i.nomPers === inputpers.value);
-
-						console.log("Infirmier trouvé", i);
-						window.location.href = `/personnel/${i.idPers}`;
-					}
-				};
-			}
-		}
 	} catch (error) {
-		console.error("Erreur client medecin", error);
+		console.error("Erreur affichage dashboard médecin", error);
 	}
+}
 
-	try {
-		const patients = await fetchPatients();
-		if (patients) {
-			if (patients.length === 0) {
-				patientDiv.innerHTML += `Aucun patient n'est acutellement en séjour dans votre service.`;
-			} else {
-				// patients.forEach(p =>{
-				// 	patientDiv.innerHTML += p.nomPers + ` ` + p.prenomPers
-				// 				+ `<button onclick="window.location.href='/patient/`+
-				// 				p.idPers +`'">+ d'info</button><br>`;
-				// });
-				patients.forEach(p => {
-					const patientItem = document.createElement('div');
-					patientItem.className = "list-group-item d-flex justify-content-between align-items-center";
+function afficherBienvenue(medecin) {
+	welcome.innerHTML = `Bonjour ${medecin.prenomPers} ${medecin.nomPers} !`;
+	if (medecin.estReferent) {
+		welcome.innerHTML += `<p class="text-success mt-2 mb-2 fs-5"><em>Médecin Référent du service ${medecin.service}.</em></p>`;
+	}
+	patient.innerHTML = `Patients actuellement au service ${medecin.service} :`;
+}
 
-					patientItem.innerHTML = `
-					  <span>${p.nomPers} ${p.prenomPers}</span>
-					  <button class="btn btn-outline-primary btn-sm" onclick="window.location.href='/patient/${p.idPers}'">+ d'info</button>
-					`;
+async function afficherPersonnel(idService) {
+	const personnes = await fetchPersonne(idService);
+	if (!personnes) return;
 
-					patientDiv.appendChild(patientItem);
-				});
-			}
+	const persondata = document.getElementById("persondata");
+	const inputpers = document.getElementById("person");
+	const hiddenId = document.getElementById("selectedId");
+	const button = document.getElementById("select");
+
+	[...personnes.inf, ...personnes.med].forEach(p => {
+		const opt = document.createElement("option");
+		opt.value = `${p.prenomPers} ${p.nomPers}`;
+		opt.setAttribute("data-id", p.idPers);
+		persondata.appendChild(opt);
+	});
+
+	inputpers.addEventListener("input", () => {
+		const val = inputpers.value.trim().toLowerCase();
+		const options = [...document.querySelectorAll("#persondata option")];
+		const found = options.find(opt => opt.value.trim().toLowerCase() === val);
+		hiddenId.value = found ? found.getAttribute("data-id") : "";
+	});
+
+	button.onclick = () => {
+		const id = hiddenId.value;
+		if (id) {
+			window.location.href = `/personnel/${id}`;
 		} else {
-			throw new Error("Erreur lors de la recuperation des patiens du service");
+			alert("Veuillez sélectionner une personne dans la liste.");
 		}
-	} catch (error) {
-		console.error("Erreur client patients", error);
+	};
+}
+
+async function afficherPatients() {
+	const patients = await fetchPatients();
+	if (!patients) return;
+
+	if (patients.length === 0) {
+		patientDiv.innerHTML += `Aucun patient n'est actuellement en séjour dans votre service.`;
+		return;
 	}
+
+	patients.forEach(p => {
+		const patientItem = document.createElement('div');
+		patientItem.className = "list-group-item d-flex justify-content-between align-items-center";
+		patientItem.innerHTML = `
+			<span>${p.nomPers} ${p.prenomPers}</span>
+			<button class="btn btn-outline-primary btn-sm" onclick="window.location.href='/patient/${p.idPers}'">+ d'info</button>
+		`;
+		patientDiv.appendChild(patientItem);
+	});
 }
 
 async function fetchMedecin() {
 	try {
 		const response = await fetch('/api/medecin');
-		if (!response.ok) {
-			throw new Error('Erreur recuperation medecin');
-		}
-
-		const medecin = await response.json();
-
-		return medecin
-	} catch (error) {
-		console.error("Erreur medecin", error);
+		if (!response.ok) throw new Error();
+		return await response.json();
+	} catch {
+		console.error("Erreur lors de la récupération du médecin");
 	}
 }
 
 async function fetchPatients() {
 	try {
 		const response = await fetch('/api/patients/service');
-
-		if (!response.ok) {
-			throw new Error('Erreur recuperation patient');
-		}
-
-		const patients = await response.json();
-
-		return patients;
-	} catch (error) {
-		console.error("Erreuuur", error);
+		if (!response.ok) throw new Error();
+		return await response.json();
+	} catch {
+		console.error("Erreur lors de la récupération des patients");
 	}
 }
 
 async function fetchPersonne(id) {
 	try {
 		const response = await fetch('/api/personnel/service/' + id);
-
-		if (!response.ok) {
-			throw new Error('Erreur recuperation personne');
-		}
-
-		const patients = await response.json();
-
-		return patients;
-	} catch (error) {
-		console.error("Erreuuur", error);
+		if (!response.ok) throw new Error();
+		return await response.json();
+	} catch {
+		console.error("Erreur lors de la récupération du personnel");
 	}
 }
