@@ -337,7 +337,7 @@ router.get('/sejour/encours', isAdmin, (req, res) => {
         WHERE c.idService = ?
         AND s.dateAdmission <= DATE('now')
         AND (s.dateSortieReelle IS NULL)
-        AND (s.dateSortiePrevue >= DATE('now') OR s.dateSortiePrevue IS NULL);
+	AND (s.dateSortieReelle IS NULL OR s.dateSortieReelle >= DATE('now'));
     `;
 
 	db.all(sql, [req.session.admin.idService], (err, rows) => {
